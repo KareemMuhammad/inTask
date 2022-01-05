@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "5086968275",
+    "project_id": "taskaty-9dbe5",
+    "storage_bucket": "taskaty-9dbe5.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:5086968275:android:fc460fe5462c14aa065726",
+        "android_client_info": {
+          "package_name": "com.outofthebox.taskaty"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "5086968275-roh76dcgpk4j894v2a9b13hqmq4up3tu.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBLCBrl14QUfgfxvmJuhCWtWlO56vl1yeg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "5086968275-roh76dcgpk4j894v2a9b13hqmq4up3tu.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
