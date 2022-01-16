@@ -14,9 +14,10 @@ class SetupScreen extends StatefulWidget {
 }
 
 class _SetupScreenState extends State<SetupScreen> {
-  GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  TextEditingController _textController = new TextEditingController();
-  TextEditingController _emailController = new TextEditingController();
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  final TextEditingController _textController = new TextEditingController();
+  final TextEditingController _emailController = new TextEditingController();
+  String _brand = '';
 
   @override
   Widget build(BuildContext context) {
@@ -88,6 +89,12 @@ class _SetupScreenState extends State<SetupScreen> {
                   child: TextFormField(
                     keyboardType: inputType,
                     style: TextStyle(color: black,fontSize: 18,),
+                    textDirection: Utils.isRTL(_brand.isNotEmpty ? _brand : _textController.text) ? TextDirection.rtl : TextDirection.ltr,
+                    onChanged: (value){
+                      setState(() {
+                        _brand = value;
+                      });
+                    },
                     decoration: textInputDecoration2(nameText),
                     controller: _textController,
                     validator: (val) {

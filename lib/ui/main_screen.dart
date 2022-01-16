@@ -9,11 +9,14 @@ import 'package:taskaty/blocs/upcoming_task_bloc/upcoming_task_cubit.dart';
 import 'package:taskaty/blocs/upcoming_task_bloc/upcoming_task_state.dart';
 import 'package:taskaty/blocs/user_bloc/user_cubit.dart';
 import 'package:taskaty/blocs/user_bloc/user_state.dart';
+import 'package:taskaty/models/task_model.dart';
 import 'package:taskaty/models/user_model.dart';
 import 'package:taskaty/repo/user_repository.dart';
 import 'package:taskaty/services/notification_services.dart';
 import 'package:taskaty/ui/nav_bar/edit_profile.dart';
 import 'package:taskaty/ui/project/seeAllProjectsPage.dart';
+import 'package:taskaty/ui/task/seeAllPage.dart';
+import 'package:taskaty/ui/wrapper_screen.dart';
 import 'nav_bar/myTask_navBar.dart';
 import 'package:taskaty/widgets/stateful/project_widget.dart';
 import 'package:taskaty/utils/constants.dart';
@@ -31,6 +34,9 @@ class MainScreen extends StatefulWidget {
 
 class _MainScreenState extends State<MainScreen> {
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
+  List<MyTask> _allToDoTasks;
+  List<MyTask> _allDoingTasks;
+  List<MyTask> _allDoneTasks;
   String message;
   PushNotificationServices fcm = PushNotificationServices(auth: FirebaseAuth.instance,
       usersRepository: UserRepository(),messaging: FirebaseMessaging.instance);
@@ -87,6 +93,7 @@ class _MainScreenState extends State<MainScreen> {
                         title: Text('Edit Profile', style: TextStyle(
                             fontSize: 19,
                             color: darkNavy,
+                          fontFamily: 'OrelegaOne',
                         ),),
                         onTap: (){
                           Navigator.pop(context);
@@ -99,9 +106,10 @@ class _MainScreenState extends State<MainScreen> {
                     ),
                     ListTile(
                       leading: Icon(Icons.inbox,size: 23,color: darkNavy,),
-                      title: Text('To Do Tasks', style: TextStyle(
+                      title: Text('My Tasks', style: TextStyle(
                         fontSize: 19,
                         color: darkNavy,
+                        fontFamily: 'OrelegaOne',
                       ),),
                       onTap: (){
                         Navigator.pop(context);
@@ -121,6 +129,7 @@ class _MainScreenState extends State<MainScreen> {
                         title: Text('Rate Our App', style: TextStyle(
                           fontSize: 19,
                           color: darkNavy,
+                          fontFamily: 'OrelegaOne',
                         ),),
                         onTap: ()async{
                           await launch(APP_LINK);
@@ -135,12 +144,13 @@ class _MainScreenState extends State<MainScreen> {
                       title: Text('Logout', style: TextStyle(
                         fontSize: 19,
                         color: darkNavy,
+                        fontFamily: 'OrelegaOne',
                       ),),
-                      onTap: (){
-                        BlocProvider.of<AuthCubit>(context).signOut();
+                      onTap: ()async{
+                        await BlocProvider.of<AuthCubit>(context).signOut();
                         BlocProvider.of<UserCubit>(context).emit(UserInitial());
-                        int count = 0;
-                        Navigator.of(context).popUntil((_) => count++ >= 2);
+                        Navigator.pop(context);
+                        Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => WrapperScreen()));
                       },
                     ),
                   ],
@@ -172,6 +182,7 @@ class _MainScreenState extends State<MainScreen> {
                       title: Text('Edit Profile', style: TextStyle(
                         fontSize: 19,
                         color: darkNavy,
+                        fontFamily: 'OrelegaOne',
                       ),),
                       onTap: (){
                         Navigator.pop(context);
@@ -184,9 +195,10 @@ class _MainScreenState extends State<MainScreen> {
                     ),
                     ListTile(
                       leading: Icon(Icons.inbox,size: 23,color: darkNavy,),
-                      title: Text('To Do Tasks', style: TextStyle(
+                      title: Text('My Tasks', style: TextStyle(
                         fontSize: 19,
                         color: darkNavy,
+                        fontFamily: 'OrelegaOne',
                       ),),
                       onTap: (){
                         Navigator.pop(context);
@@ -206,6 +218,7 @@ class _MainScreenState extends State<MainScreen> {
                       title: Text('Rate Our App', style: TextStyle(
                         fontSize: 19,
                         color: darkNavy,
+                        fontFamily: 'OrelegaOne',
                       ),),
                       onTap: ()async{
                         await launch(APP_LINK);
@@ -220,12 +233,13 @@ class _MainScreenState extends State<MainScreen> {
                       title: Text('Logout', style: TextStyle(
                         fontSize: 19,
                         color: darkNavy,
+                        fontFamily: 'OrelegaOne',
                       ),),
-                      onTap: (){
-                        BlocProvider.of<AuthCubit>(context).signOut();
+                      onTap: ()async{
+                        await BlocProvider.of<AuthCubit>(context).signOut();
                         BlocProvider.of<UserCubit>(context).emit(UserInitial());
-                        int count = 0;
-                        Navigator.of(context).popUntil((_) => count++ >= 2);
+                        Navigator.pop(context);
+                        Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => WrapperScreen()));
                       },
                     ),
                   ],
@@ -236,8 +250,7 @@ class _MainScreenState extends State<MainScreen> {
         ),
       ),
      body: SafeArea(
-       child: SingleChildScrollView(
-         child: Column(
+       child: Column(
            crossAxisAlignment: CrossAxisAlignment.center,
            children: [
              Align(
@@ -246,13 +259,14 @@ class _MainScreenState extends State<MainScreen> {
                    height: SizeConfig.screenHeight * 0.2,
                    width: SizeConfig.screenWidth,
                    decoration: BoxDecoration(
-                     borderRadius: BorderRadius.only(bottomRight: Radius.circular(20),bottomLeft: Radius.circular(20)),
+                     borderRadius: const BorderRadius.only(bottomRight: Radius.circular(20),bottomLeft: Radius.circular(20)),
                      gradient: myGradient(),
                    ),
                    child: Stack(alignment: Alignment.topCenter,
                      children: [
                        Positioned(
-                         child: Image.asset('assets/free_app_icon.png',height: 50,width: 50,),
+                         child: Image.asset('assets/free_app_icon.png',
+                           height: SizeConfig.blockSizeVertical * 7,width: SizeConfig.blockSizeVertical * 7,),
                          top: 10,
                        ),
                        Positioned(
@@ -273,6 +287,7 @@ class _MainScreenState extends State<MainScreen> {
                              child: Text('$message, ${state.appUser.name.split(' ')[0]}', style: TextStyle(
                                fontSize: 23,
                                color: white,
+                                 fontFamily: 'OrelegaOne'
                              ),textAlign: TextAlign.center,),) :
 
                            Positioned(
@@ -280,6 +295,7 @@ class _MainScreenState extends State<MainScreen> {
                              child: Text('$message, ${Utils.getCurrentUser(context).name.split(' ')[0]}', style: TextStyle(
                                fontSize: 23,
                                color: white,
+                               fontFamily: 'OrelegaOne'
                              ),textAlign: TextAlign.center,),);
                          }
                        ),
@@ -290,200 +306,376 @@ class _MainScreenState extends State<MainScreen> {
                ),
              const SizedBox(height: 30,),
 
-             BlocConsumer<ProjectCubit,ProjectState>(
-                 builder: (ctx,state){
-                   if(state is ProjectFailure){
-                     return Text(
-                       'Data load error, please try again later!',
-                       style: TextStyle(
-                         fontSize: 19,
-                         color: darkNavy,
-                       ),
-                     );
-
-                   }else if (state is ProjectsLoaded){
-                     return state.projectsList.isNotEmpty ?
-                     Column( crossAxisAlignment: CrossAxisAlignment.center,
-                       children: [
-                         Padding(
-                           padding: const EdgeInsets.all(10.0),
-                           child: Row(
-                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                             crossAxisAlignment: CrossAxisAlignment.center,
-                             children: [
-                               Text('Current Projects', style: TextStyle(
+             Expanded(
+               child: RefreshIndicator(
+                 backgroundColor: lightNavy,
+                 color: white,
+                 onRefresh: () async {
+                   await Future.delayed(Duration(seconds: 1));
+                   BlocProvider.of<ProjectCubit>(context).getAllProjects(Utils.getCurrentUser(context));
+                   BlocProvider.of<UpcomingTaskCubit>(context).getAllCurrentTasks();
+                   BlocProvider.of<AuthCubit>(context).loadUsers();
+                 },
+                 child: ListView(
+                   physics: ClampingScrollPhysics(),
+                   children: [
+                     const SizedBox(height: 5,),
+                     BlocConsumer<ProjectCubit,ProjectState>(
+                         builder: (ctx,state){
+                           if(state is ProjectFailure){
+                             return Text(
+                               'Data load error, please try again later!',
+                               style: TextStyle(
                                  fontSize: 19,
                                  color: darkNavy,
-                                 fontWeight: FontWeight.w500,
-                               ),),
-                               GestureDetector(
-                                 onTap: () {
-                                   Navigator.of(context).push(MaterialPageRoute(
-                                     builder: (builder) {
-                                       return SeeAllProjectsPage(title: 'My Projects',tasksList: state.projectsList,);
-                                     },
-                                   ));
-                                 },
-                                 child: Text(
-                                   'View all projects',
-                                   style: TextStyle(
-                                     fontSize: 19,
-                                     color: darkNavy,
-                                     fontWeight: FontWeight.w500,
+                               ),
+                             );
+
+                           }else if (state is ProjectsLoaded){
+                             return state.projectsList.isNotEmpty ?
+                             Column( crossAxisAlignment: CrossAxisAlignment.center,
+                               children: [
+                                 Padding(
+                                   padding: const EdgeInsets.symmetric(vertical: 8.0,horizontal: 10),
+                                   child: Row(
+                                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                     crossAxisAlignment: CrossAxisAlignment.center,
+                                     children: [
+                                       Text('Current Projects', style: TextStyle(
+                                         fontSize: SizeConfig.blockSizeVertical * 2.6,
+                                         color: darkNavy,
+                                         fontWeight: FontWeight.w500,
+                                           fontFamily: 'OrelegaOne'
+                                       ),),
+                                       GestureDetector(
+                                         onTap: () {
+                                           Navigator.of(context).push(MaterialPageRoute(
+                                             builder: (builder) {
+                                               return SeeAllProjectsPage(title: 'My Projects',tasksList: state.projectsList,);
+                                             },
+                                           ));
+                                         },
+                                         child: Text(
+                                           'View all projects',
+                                           style: TextStyle(
+                                             fontSize: SizeConfig.blockSizeVertical * 2.6,
+                                             color: darkNavy,
+                                             fontFamily: 'OrelegaOne',
+                                             fontWeight: FontWeight.w500,
+                                           ),
+                                         ),
+                                       ),
+                                     ],
                                    ),
                                  ),
-                               ),
-                             ],
-                           ),
-                         ),
-                         Container(
-                           height: SizeConfig.screenHeight * 0.2,
-                           child: ListView.builder(
-                               scrollDirection: Axis.horizontal,
-                               itemCount: state.projectsList.take(4).length,
-                               itemBuilder: (context,index) {
-                               return ProjectWidget(model: state.projectsList[index]);
-                             }
-                           ),
-                         ),
-                       ],
-                     )
-                     : _emptyProjectsWidget(context);
-
-                   }else{
-                     return Container(
-                       height: SizeConfig.screenHeight * 0.2,
-                       child: ListView.builder(
-                           scrollDirection: Axis.horizontal,
-                           itemCount: 4,
-                           itemBuilder: (context,index){
-                             return loadProjectsShimmer();
-                           }),
-                     );
-                   }
-                 }, listener: (ctx,state){}),
-
-             const SizedBox(height: 50,),
-
-             BlocConsumer<UpcomingTaskCubit,MyUpcomingTaskState>(
-                 builder: (ctx,state){
-                   if(state is UpTaskFailure){
-                     return Padding(
-                       padding: const EdgeInsets.all(8.0),
-                       child: Text(
-                         'Data load error, please try again later!',
-                         style: TextStyle(
-                           fontSize: 19,
-                           color: darkNavy,
-                         ),
-                       ),
-                     );
-
-                   }else if (state is UpcomingTasksLoaded){
-                     return state.upTasks.isNotEmpty ?
-                     Column(crossAxisAlignment: CrossAxisAlignment.center,
-                       children: [
-                         Padding(
-                           padding: const EdgeInsets.all(10.0),
-                           child: Row(
-                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                             crossAxisAlignment: CrossAxisAlignment.center,
-                             children: [
-                               Text('To Do Tasks', style: TextStyle(
-                                 fontSize: 19,
-                                 color: darkNavy,
-                                 fontWeight: FontWeight.w500,
-                               ),),
-                               GestureDetector(
-                                 onTap: () {
-                                   Navigator.of(context).push(MaterialPageRoute(
-                                     builder: (builder) {
-                                       return SeeAllMyTaskPage();
-                                     },
-                                   ));
-                                 },
-                                 child: Text(
-                                   'View all tasks',
-                                   style: TextStyle(
-                                     fontSize: 19,
-                                     color: darkNavy,
-                                     fontWeight: FontWeight.w500,
+                                 Container(
+                                   height: SizeConfig.screenHeight * 0.17,
+                                   child: ListView.builder(
+                                       scrollDirection: Axis.horizontal,
+                                       itemCount: state.projectsList.take(4).length,
+                                       itemBuilder: (context,index) {
+                                       return ProjectWidget(model: state.projectsList[index]);
+                                     }
                                    ),
                                  ),
-                               ),
-                             ],
-                           ),
-                         ),
-                         Container(
-                           height: SizeConfig.screenHeight * 0.36,
-                           child: ListView.builder(
-                               scrollDirection: Axis.horizontal,
-                               itemCount: state.upTasks.take(4).length,
-                               itemBuilder: (context,index){
-                                 return Column(
-                                   children: [
-                                     Expanded(child: CurrentTaskList(task: state.upTasks[index])),
-                                     Padding(
-                                       padding: const EdgeInsets.all(5.0),
-                                       child: Text('(${ state.upTasks[index].projectName})',
-                                         style: TextStyle(letterSpacing: 1,fontWeight: FontWeight.w500,color: darkNavy,fontSize: 16),),
-                                     ),
-                                     const SizedBox(height: 10,),
-                                   ],
-                                 );
-                               }),
-                         ),
-                       ],
-                     )
-                         : Center(
-                           child: Column(
-                             mainAxisAlignment: MainAxisAlignment.center,
-                             crossAxisAlignment: CrossAxisAlignment.center,
-                             children: [
-                               const SizedBox(height: 20,),
-                               Image.asset('assets/list.png'),
-                               Padding(padding: const EdgeInsets.all(4.0)),
-                               Text(
-                                 "You don't have any To Do tasks!",
+                               ],
+                             )
+                             : _emptyProjectsWidget(context);
+
+                           }else{
+                             return Container(
+                               height: SizeConfig.screenHeight * 0.2,
+                               child: ListView.builder(
+                                   scrollDirection: Axis.horizontal,
+                                   itemCount: 4,
+                                   itemBuilder: (context,index){
+                                     return loadProjectsShimmer();
+                                   }),
+                             );
+                           }
+                         }, listener: (ctx,state){}),
+
+                     const SizedBox(height: 50,),
+
+                     BlocConsumer<UpcomingTaskCubit,MyUpcomingTaskState>(
+                         builder: (ctx,state){
+                           if(state is UpTaskFailure){
+                             return Padding(
+                               padding: const EdgeInsets.all(8.0),
+                               child: Text(
+                                 'Data load error, please try again later!',
                                  style: TextStyle(
-                                     color: Colors.black38,
-                                     fontSize: 18.0,
-                                     fontWeight: FontWeight.w500),
+                                   fontSize: 19,
+                                   color: darkNavy,
+                                 ),
                                ),
-                             ],
-                           ),
-                     );
+                             );
 
-                   }else{
-                     return Container(
-                       height: SizeConfig.screenHeight * 0.3,
-                       child: ListView.builder(
-                           scrollDirection: Axis.horizontal,
-                           itemCount: 4,
-                           itemBuilder: (context,index){
-                             return loadUpcomingShimmer();
-                           }),
-                     );
-                   }
-                 }, listener: (ctx,state){}),
+                           }else if (state is UpcomingTasksLoaded){
+                             _allToDoTasks = state.upTasks.where((element) => element.status == Utils.TO_DO).toList();
+                             _allDoingTasks = state.upTasks.where((element) => element.status == Utils.DOING).toList();
+                             _allDoneTasks = state.upTasks.where((element) => element.status == Utils.DONE).toList();
+                             return state.upTasks.isNotEmpty ?
+                             Column(crossAxisAlignment: CrossAxisAlignment.center,
+                               children: [
+                                 Padding(
+                                   padding: const EdgeInsets.all(10.0),
+                                   child: Row(
+                                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                     crossAxisAlignment: CrossAxisAlignment.center,
+                                     children: [
+                                       Text('To Do Tasks', style: TextStyle(
+                                         fontSize: SizeConfig.blockSizeVertical * 2.6,
+                                         color: darkNavy,
+                                         fontWeight: FontWeight.w500,
+                                         fontFamily: 'OrelegaOne',
+                                       ),),
+                                       GestureDetector(
+                                         onTap: () {
+                                           Navigator.of(context).push(MaterialPageRoute(
+                                             builder: (builder) {
+                                               return SeeAllPage(title: Utils.TO_DO,tasksList: _allToDoTasks,);
+                                             },
+                                           ));
+                                         },
+                                         child: Text(
+                                           'View all tasks',
+                                           style: TextStyle(
+                                             fontSize: SizeConfig.blockSizeVertical * 2.6,
+                                             color: darkNavy,
+                                             fontWeight: FontWeight.w500,
+                                             fontFamily: 'OrelegaOne',
+                                           ),
+                                         ),
+                                       ),
+                                     ],
+                                   ),
+                                 ),
+                                 _allToDoTasks.isEmpty?
+                                 Center(child: Padding(
+                                   padding: const EdgeInsets.all(10.0),
+                                   child: Column(
+                                     children: [
+                                       Icon(Icons.inbox,color: Colors.grey[600],),
+                                       Text(
+                                         "To Do list is empty",
+                                         style: TextStyle(
+                                             color: Colors.black38,
+                                             fontSize: 16.0,
+                                             fontWeight: FontWeight.w500),
+                                       ),
+                                     ],
+                                   ),
+                                 )):
+                                 Container(
+                                   height: SizeConfig.screenHeight * 0.36,
+                                   child: ListView.builder(
+                                       scrollDirection: Axis.horizontal,
+                                       itemCount: _allToDoTasks.take(4).length,
+                                       itemBuilder: (context,index){
+                                         return Column(
+                                           children: [
+                                             Expanded(child: CurrentTaskList(task: _allToDoTasks[index])),
+                                             Padding(
+                                               padding: const EdgeInsets.all(5.0),
+                                               child: Text('(${ _allToDoTasks[index].projectName})',
+                                                 style: TextStyle(letterSpacing: 1,fontWeight: FontWeight.w500,color: darkNavy,fontSize: 16),),
+                                             ),
+                                             const SizedBox(height: 10,),
+                                           ],
+                                         );
+                                       }),
+                                 ),
+                                 const SizedBox(height: 10,),
+                                 //////////////////////// Doing //////////////////////////////////////////////
+
+                                 Padding(
+                                   padding: const EdgeInsets.all(10.0),
+                                   child: Row(
+                                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                     crossAxisAlignment: CrossAxisAlignment.center,
+                                     children: [
+                                       Text('Doing Tasks', style: TextStyle(
+                                         fontSize: SizeConfig.blockSizeVertical * 2.6,
+                                         color: darkNavy,
+                                         fontWeight: FontWeight.w500,
+                                         fontFamily: 'OrelegaOne',
+                                       ),),
+                                       GestureDetector(
+                                         onTap: () {
+                                           Navigator.of(context).push(MaterialPageRoute(
+                                             builder: (builder) {
+                                               return SeeAllPage(title: Utils.DOING,tasksList: _allDoingTasks,);
+                                             },
+                                           ));
+                                         },
+                                         child: Text(
+                                           'View all tasks',
+                                           style: TextStyle(
+                                             fontSize: SizeConfig.blockSizeVertical * 2.6,
+                                             color: darkNavy,
+                                             fontWeight: FontWeight.w500,
+                                             fontFamily: 'OrelegaOne',
+                                           ),
+                                         ),
+                                       ),
+                                     ],
+                                   ),
+                                 ),
+                                 _allDoingTasks.isEmpty?
+                                 Center(child: Padding(
+                                   padding: const EdgeInsets.all(10.0),
+                                   child: Column(
+                                     children: [
+                                       Icon(Icons.inbox,color: Colors.grey[600],),
+                                       Text(
+                                         "Doing list is empty",
+                                         style: TextStyle(
+                                             color: Colors.black38,
+                                             fontSize: 16.0,
+                                             fontWeight: FontWeight.w500),
+                                       ),
+                                     ],
+                                   ),
+                                 )):
+                                 Container(
+                                   height: SizeConfig.screenHeight * 0.36,
+                                   child: ListView.builder(
+                                       scrollDirection: Axis.horizontal,
+                                       itemCount: _allDoingTasks.take(4).length,
+                                       itemBuilder: (context,index){
+                                         return Column(
+                                           children: [
+                                             Expanded(child: CurrentTaskList(task: _allDoingTasks[index])),
+                                             Padding(
+                                               padding: const EdgeInsets.all(5.0),
+                                               child: Text('(${ _allDoingTasks[index].projectName})',
+                                                 style: TextStyle(letterSpacing: 1,fontWeight: FontWeight.w500,color: darkNavy,fontSize: 16),),
+                                             ),
+                                             const SizedBox(height: 10,),
+                                           ],
+                                         );
+                                       }),
+                                 ),
+                                 const SizedBox(height: 10,),
+                                 //////////////////////// Done //////////////////////////////////////////////
+
+                                 Padding(
+                                   padding: const EdgeInsets.all(10.0),
+                                   child: Row(
+                                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                     crossAxisAlignment: CrossAxisAlignment.center,
+                                     children: [
+                                       Text('Done Tasks', style: TextStyle(
+                                         fontSize: SizeConfig.blockSizeVertical * 2.6,
+                                         color: darkNavy,
+                                         fontWeight: FontWeight.w500,
+                                         fontFamily: 'OrelegaOne',
+                                       ),),
+                                       GestureDetector(
+                                         onTap: () {
+                                           Navigator.of(context).push(MaterialPageRoute(
+                                             builder: (builder) {
+                                               return SeeAllPage(title: Utils.DONE,tasksList: _allDoneTasks,);
+                                             },
+                                           ));
+                                         },
+                                         child: Text(
+                                           'View all tasks',
+                                           style: TextStyle(
+                                             fontSize: SizeConfig.blockSizeVertical * 2.6,
+                                             color: darkNavy,
+                                             fontWeight: FontWeight.w500,
+                                             fontFamily: 'OrelegaOne',
+                                           ),
+                                         ),
+                                       ),
+                                     ],
+                                   ),
+                                 ),
+                                 _allDoneTasks.isEmpty?
+                                 Center(child: Padding(
+                                   padding: const EdgeInsets.all(10.0),
+                                   child: Column(
+                                     children: [
+                                       Icon(Icons.inbox,color: Colors.grey[600],),
+                                       Text(
+                                         "Done list is empty",
+                                         style: TextStyle(
+                                             color: Colors.black38,
+                                             fontSize: 16.0,
+                                             fontWeight: FontWeight.w500),
+                                       ),
+                                     ],
+                                   ),
+                                 )):
+                                 Container(
+                                   height: SizeConfig.screenHeight * 0.36,
+                                   child: ListView.builder(
+                                       scrollDirection: Axis.horizontal,
+                                       itemCount: _allDoneTasks.take(4).length,
+                                       itemBuilder: (context,index){
+                                         return Column(
+                                           children: [
+                                             Expanded(child: CurrentTaskList(task: _allDoneTasks[index])),
+                                             Padding(
+                                               padding: const EdgeInsets.all(5.0),
+                                               child: Text('(${ _allDoneTasks[index].projectName})',
+                                                 style: TextStyle(letterSpacing: 1,fontWeight: FontWeight.w500,color: darkNavy,fontSize: 16),),
+                                             ),
+                                             const SizedBox(height: 10,),
+                                           ],
+                                         );
+                                       }),
+                                 ),
+                               ],
+                             )
+                                 : Center(
+                               child: Column(
+                                 mainAxisAlignment: MainAxisAlignment.center,
+                                 crossAxisAlignment: CrossAxisAlignment.center,
+                                 children: [
+                                   const SizedBox(height: 20,),
+                                   Image.asset('assets/list.png'),
+                                   Padding(padding: const EdgeInsets.all(4.0)),
+                                   Text(
+                                     "You don't have any tasks!",
+                                     style: TextStyle(
+                                         color: Colors.black38,
+                                         fontSize: 18.0,
+                                         fontWeight: FontWeight.w500),
+                                   ),
+                                 ],
+                               ),
+                             );
+
+                           }else{
+                             return Container(
+                               height: SizeConfig.screenHeight * 0.3,
+                               child: ListView.builder(
+                                   scrollDirection: Axis.horizontal,
+                                   itemCount: 4,
+                                   itemBuilder: (context,index){
+                                     return loadUpcomingShimmer();
+                                   }),
+                             );
+                           }
+                         }, listener: (ctx,state){}),
+                   ],
+                 ),
+               ),
+             ),
+           const SizedBox(height: 10,),
            ],
          ),
-       ),
      ),
-      bottomNavigationBar: Container(
-        height: 25,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.only(topLeft: Radius.circular(20),topRight: Radius.circular(20)),
-          color: lightNavy
-        ),
-      ),
       floatingActionButton: FloatingActionButton(
         onPressed: this._navigateToAddProjectScreen,
         backgroundColor: lightNavy,
         foregroundColor: Colors.white,
-        child: Icon(Icons.drive_file_rename_outline,color: white,),
+        child: Icon(Icons.drive_file_rename_outline,color: white,size: 30,),
       ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+
     );
   }
 
@@ -515,7 +707,7 @@ class _MainScreenState extends State<MainScreen> {
                 height: SizeConfig.screenHeight * 0.1,
                 child: Padding(
                   padding: const EdgeInsets.all(8.0),
-                  child: Text('Go create one!',style: TextStyle(fontSize: SizeConfig.blockSizeVertical * 2.6,color: white),),
+                  child: Text('Go create one!',style: TextStyle(fontSize: SizeConfig.blockSizeVertical * 2.1,color: white),),
                 ),
                 gradient: myGradient(),
                 onPressed: (){

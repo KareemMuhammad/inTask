@@ -34,7 +34,7 @@ class AuthCubit extends Cubit<AuthState>{
           emit(AuthFailure());
         }
     }catch(e){
-      print(e.toString());
+
       emit(AuthFailure());
     }
  }
@@ -43,7 +43,7 @@ class AuthCubit extends Cubit<AuthState>{
     try {
      _allUsers = await userRepository.getAllUsers();
     }catch(e){
-      print(e.toString());
+
     }
   }
 
@@ -57,7 +57,7 @@ class AuthCubit extends Cubit<AuthState>{
         emit(AuthFailure());
       }
     }catch(e){
-      print(e.toString());
+
       emit(AuthFailure());
     }
   }
@@ -71,7 +71,7 @@ class AuthCubit extends Cubit<AuthState>{
       }
     }catch(e){
       emit(AuthFailure());
-      print(e.toString());
+
     }
   }
 

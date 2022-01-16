@@ -28,7 +28,7 @@ class UserCubit extends Cubit<UserState>{
           emit(UserLoadError());
         }
     }catch(e){
-      print(e.toString());
+
       emit(UserLoadError());
     }
  }
@@ -39,7 +39,6 @@ class UserCubit extends Cubit<UserState>{
       emit(UserPasswordReset());
     }catch(e){
       emit(UserLoadError());
-      print(e.toString());
     }
   }
 
@@ -48,7 +47,6 @@ class UserCubit extends Cubit<UserState>{
       await userRepository.updateInfo(name, _auth.currentUser.uid,key);
     }catch(e){
       emit(UserLoadError());
-      print(e.toString());
     }
   }
 
@@ -57,7 +55,6 @@ class UserCubit extends Cubit<UserState>{
        bool result = await userRepository.authenticateUserEmail(email);
        return result;
     }catch(e){
-      print(e.toString());
       return false;
     }
   }

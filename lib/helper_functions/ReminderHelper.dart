@@ -49,14 +49,14 @@ class LocalNotification {
         visibility: NotificationVisibility.public,
         styleInformation: BigTextStyleInformation(''));
 
-    var iOS = IOSNotificationDetails(presentSound: true,subtitle: 'Task');
+    var iOS = IOSNotificationDetails(presentSound: true,subtitle: 'inTask');
     var generalNotificationDetails = NotificationDetails(android: androidDetails,iOS: iOS);
 
     var scheduledTime = DateTime.now().add(Duration(milliseconds: timestampInMS));
 
     try {
       await flutterLocalNotificationsPlugin.schedule(notificationId, name,
-          'You have a task', scheduledTime, generalNotificationDetails, payload: taskId);
+          'You have a new task', scheduledTime, generalNotificationDetails, payload: taskId);
     } catch (e) {}
   }
 
@@ -94,12 +94,12 @@ class LocalNotification {
 
   Future showNormalNotification(String title) async {
     String id = Uuid().v4();
-    var android = AndroidNotificationDetails(id, 'Taskaty', title,playSound: true,
+    var android = AndroidNotificationDetails(id, 'inTask', title,playSound: true,
       priority: Priority.high,importance: Importance.max,);
-    var iOS = IOSNotificationDetails(presentSound: true,subtitle: 'Taskaty');
+    var iOS = IOSNotificationDetails(presentSound: true,subtitle: 'inTask');
     var platform = NotificationDetails(iOS: iOS,android: android);
 
-    await flutterLocalNotificationsPlugin.show(Random().nextInt(100000), title,'Taskaty',platform);
+    await flutterLocalNotificationsPlugin.show(Random().nextInt(100000), title,'inTask',platform);
   }
 
 }

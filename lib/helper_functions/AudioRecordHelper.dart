@@ -33,12 +33,12 @@ class AudioRecordHelper {
     }
   }
 
-  Future<bool> stopRecording() async {
+  Future stopRecording() async {
     try {
       final recordPath = await _audioRecorder.stop();
-      return true;
+      return recordPath;
     } catch (e) {
-      return false;
+      return null;
     }
   }
 

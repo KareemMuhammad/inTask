@@ -3,6 +3,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:taskaty/blocs/user_bloc/user_cubit.dart';
 import 'package:taskaty/blocs/user_bloc/user_state.dart';
 import 'package:taskaty/models/user_model.dart';
+import 'package:taskaty/ui/nav_bar/policy.dart';
+import 'package:taskaty/utils/constants.dart';
 import 'package:taskaty/utils/shared.dart';
 import 'package:taskaty/widgets/shared/custom_button.dart';
 import 'package:taskaty/widgets/shared/shared_widgets.dart';
@@ -20,6 +22,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _phoneController = TextEditingController();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  String _name = '';
 
   @override
   void initState() {
@@ -42,6 +45,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
           'Edit Profile',
           style: TextStyle(
             color: white,
+            fontFamily: 'OrelegaOne',
           ),
         ),
       ),
@@ -51,11 +55,12 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         child: SingleChildScrollView(
           child: Padding(
             padding: const EdgeInsets.all(10.0),
-            child: Column(
+            child: Column(mainAxisSize: MainAxisSize.min,
               children: [
                 const SizedBox(height: 25,),
                 TextFormField(
                   controller: this._nameController,
+                  textDirection: Utils.isRTL(_name.isNotEmpty ? _name : _nameController.text) ? TextDirection.rtl : TextDirection.ltr,
                   decoration: InputDecoration(
                     labelText: 'Name',
                     alignLabelWithHint: true,
@@ -67,6 +72,11 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                       borderRadius: const BorderRadius.all(Radius.circular(4.0)),
                     ),
                   ),
+                  onChanged: (val){
+                    setState(() {
+                      _name = val;
+                    });
+                  },
                 ),
                 const SizedBox(height: 30,),
                 TextFormField(
@@ -115,6 +125,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                     return state is UserLoading ? spinKit
                     :Center(
                       child: RaisedGradientButton(
+                          radius: 20,
                           width: SizeConfig.screenWidth * 0.3,
                           child: Padding(
                             padding: const EdgeInsets.all(8.0),
@@ -132,6 +143,19 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                     );
                   }
                 ),
+               Padding(
+                 padding: EdgeInsets.only(top: SizeConfig.screenHeight * 0.3),
+                 child: TextButton(
+                          onPressed: () {
+                            Navigator.push(context, MaterialPageRoute(builder: (_) => PrivacyPolicy()));
+                          },
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Text('Privacy Policy',style: TextStyle(fontSize: 20,color: Colors.grey[800],
+                              fontFamily: 'OrelegaOne',fontWeight: FontWeight.w500),),
+                          ),
+                        ),
+               ),
               ],
             ),
           ),

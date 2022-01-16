@@ -37,7 +37,7 @@ class GetTaskByDate extends StatelessWidget {
             return snapshot.data != null && snapshot.data.isNotEmpty ?
             GridView.builder(
                 itemCount: snapshot.data.length ?? 0,
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2,childAspectRatio: 1),
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2,childAspectRatio: 0.8),
                 itemBuilder: (context,index){
                   return TaskList(task: snapshot.data[index],);
                 }) : Center(child: Text('No Tasks at that date',style: TextStyle(color: Colors.grey[700],fontSize: 18),),);

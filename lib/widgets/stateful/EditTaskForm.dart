@@ -6,10 +6,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:search_choices/search_choices.dart';
+import 'package:taskaty/blocs/project_bloc/project_cubit.dart';
 import 'package:taskaty/blocs/task_bloc/task_cubit.dart';
 import 'package:taskaty/blocs/task_bloc/task_state.dart';
 import 'package:taskaty/blocs/upcoming_task_bloc/upcoming_task_cubit.dart';
-import 'package:taskaty/helper_functions/AudioRecordHelper.dart';
 import 'package:taskaty/helper_functions/ReminderHelper.dart';
 import 'package:taskaty/models/task_model.dart';
 import 'package:taskaty/models/user_model.dart';
@@ -30,8 +30,6 @@ class _EditTaskFormState extends State<EditTaskForm> {
   _EditTaskFormState(this._task);
 
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  AudioPlayerHelper _audioPlayerHelper;
-  AudioRecordHelper _audioRecordHelper;
   final LocalNotification _localNotification = LocalNotification();
   final ImagePicker imagePicker = ImagePicker();
 
@@ -40,7 +38,7 @@ class _EditTaskFormState extends State<EditTaskForm> {
   List<String> deletedImages = [];
   AppUser _assignedUser;
   String _date, _time, _taskName, _description;
-  bool _isSwitched = false, _recordedAudio, _playing;
+  bool _isSwitched = false;
   int _day, _month, _year, _hour, _minute, _notificationId;
 
   //TEXT EDITING CONTROLLER
@@ -143,7 +141,6 @@ class _EditTaskFormState extends State<EditTaskForm> {
       this._task.description = this._description;
       this._task.date = this._date;
       this._task.time = this._time;
-      this._task.audioDescription = this._recordedAudio;
       this._task.timestamp = timestamp;
       this._task.projectName = Utils.getCurrentProject(context).name;
       this._reminder(timestamp - DateTime.now().millisecondsSinceEpoch);
@@ -176,37 +173,6 @@ class _EditTaskFormState extends State<EditTaskForm> {
     } else {
       Scaffold.of(context)
           .showSnackBar(SnackBar(content: Text('Task Update Failed')));
-    }
-  }
-
-  void _deleteRecordedAudio() async {
-    this._audioRecordHelper = AudioRecordHelper(this._task.id);
-    if (this._recordedAudio != null) {
-      bool deleted = await _audioRecordHelper.deleteRecording();
-      if (deleted) {
-        setState(() {
-          this._recordedAudio = false;
-        });
-      }
-    }
-  }
-
-  void _playRecording() async {
-    _audioPlayerHelper = AudioPlayerHelper(this._task.id);
-    if (!this._playing && this._recordedAudio != null) {
-      var playing = await _audioPlayerHelper.startPlaying();
-      if (playing) {
-        setState(() {
-          this._playing = true;
-        });
-      }
-    } else {
-      var stopped = await _audioPlayerHelper.stopPlaying();
-      if (stopped) {
-        setState(() {
-          this._playing = false;
-        });
-      }
     }
   }
 
@@ -253,21 +219,12 @@ class _EditTaskFormState extends State<EditTaskForm> {
   }
 
   @override
-  void dispose() {
-    if (this._audioRecordHelper != null) {
-      _audioRecordHelper.dispose();
-    }
-
-    super.dispose();
-  }
-
-  @override
   void initState() {
+    BlocProvider.of<ProjectCubit>(context).loadCurrentProject(widget._task.projectId);
     _taskNameController.text = this._task.task;
     _descriptionController.text = this._task.description;
     this._taskName = this._task.task;
     this._description = this._task.description;
-    this._recordedAudio = this._task.audioDescription;
     this._date = this._task.date;
     this._time = this._task.time;
     if(_task.assignee.length > 1) {
@@ -276,7 +233,6 @@ class _EditTaskFormState extends State<EditTaskForm> {
           .where((element) => element.id == _task.assignee[1])
           .first;
     }
-    this._playing = false;
     if(_task.image.isNotEmpty) {
       this._taskImages = _task.image;
     }else{
@@ -306,6 +262,7 @@ class _EditTaskFormState extends State<EditTaskForm> {
                     TextFormField(
                       maxLength: 20,
                       controller: this._taskNameController,
+                      textDirection: Utils.isRTL(_taskName.isNotEmpty ? _taskName : _taskNameController.text) ? TextDirection.rtl : TextDirection.ltr,
                       decoration: InputDecoration(
                         labelText: 'Task Name',
                         alignLabelWithHint: true,
@@ -318,11 +275,17 @@ class _EditTaskFormState extends State<EditTaskForm> {
                         ),
                       ),
                       validator: this._validateTaskName,
+                      onChanged: (val){
+                        setState(() {
+                          _taskName = val;
+                        });
+                      },
                       onSaved: (input) => _taskName = input,
                     ),
                     const SizedBox(height: 20),
                     TextFormField(
                       maxLines: null,
+                      textDirection: Utils.isRTL(_description.isNotEmpty ? _description : _descriptionController.text) ? TextDirection.rtl : TextDirection.ltr,
                       controller: this._descriptionController,
                       decoration: InputDecoration(
                         labelText: 'Description',
@@ -335,42 +298,30 @@ class _EditTaskFormState extends State<EditTaskForm> {
                           borderRadius: BorderRadius.all(Radius.circular(4.0)),
                         ),
                       ),
+                      onChanged: (val){
+                        setState(() {
+                          _description = val;
+                        });
+                      },
                       onSaved: (input) => _description = input,
                       validator: this._validateTaskDescription,
                     ),
                     const SizedBox(height: 20),
-                    Container(
-                      child: this._recordedAudio != true
-                          ? null
-                          : Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Expanded(
-                                  child: Text(
-                                    'Recorded Audio',
-                                    style: TextStyle(
-                                      color: Colors.grey[600],
-                                      fontWeight: FontWeight.w500,
-                                      fontSize: 15.0,
-                                      letterSpacing: 1.0,
-                                    ),
-                                  ),
-                                ),
-                                IconButton(
-                                  onPressed: _playRecording,
-                                  icon: this._playing
-                                      ? Icon(Icons.pause_circle_filled)
-                                      : Icon(Icons.play_circle_filled),
-                                  color: lightNavy,
-                                ),
-                                Padding(padding: EdgeInsets.all(10.0)),
-                                IconButton(
-                                  onPressed: _deleteRecordedAudio,
-                                  icon: Icon(Icons.delete),
-                                  color: Colors.red[300],
-                                ),
-                              ],
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 25,horizontal: 15),
+                      child:  Row(mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            'Additional',
+                            style: TextStyle(
+                              color: Colors.grey[600],
+                              fontWeight: FontWeight.w500,
+                              fontSize: 15.0,
+                              letterSpacing: 1.0,
                             ),
+                          ),
+                        ],
+                      ),
                     ),
                     const SizedBox(height: 20),
                     Row(
@@ -646,7 +597,7 @@ class _EditTaskFormState extends State<EditTaskForm> {
               _assignedUser = null;
             });
           },
-          items: getCategoriesDropdown(),
+          items: Utils.getCurrentProject(context) == null ? [] : getCategoriesDropdown(),
           underline: const SizedBox(),
           value: _assignedUser,
           hint: "Select one",

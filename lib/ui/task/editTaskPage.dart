@@ -24,6 +24,7 @@ class EditTaskPage extends StatelessWidget {
         title: Text(
           'Update Task',
           style: TextStyle(
+            fontFamily: 'OrelegaOne',
             color: Colors.white,
           ),
         ),

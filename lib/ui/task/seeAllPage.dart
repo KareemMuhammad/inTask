@@ -102,7 +102,7 @@ class _SeeAllPageState extends State<SeeAllPage> {
                _navigateToPreviousScreen(context);
                 },
               child: const Icon(Icons.arrow_back, color: white,)),
-        title: _isSearching ? _buildSearchField() : Text("${widget.title}", style: TextStyle(color: white,fontSize: 20,),),
+        title: _isSearching ? _buildSearchField() : Text("${widget.title}", style: TextStyle(color: white,fontSize: 20,fontFamily: 'OrelegaOne',),),
         actions: _buildAppBarActions(),
       ),
       body: Padding(
@@ -112,8 +112,20 @@ class _SeeAllPageState extends State<SeeAllPage> {
               ? widget.tasksList.length : searchedForTasks.length,
           gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2,childAspectRatio: 0.8),
           itemBuilder: (BuildContext context, int index) {
-            return TaskList(task: _searchTextController.text.isEmpty
-                ? widget.tasksList[index] : searchedForTasks[index],);
+            return Column(
+              children: [
+                Expanded(
+                  child: TaskList(task: _searchTextController.text.isEmpty
+                      ? widget.tasksList[index] : searchedForTasks[index],),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(5.0),
+                  child: Text('(${_searchTextController.text.isEmpty
+                      ? widget.tasksList[index].projectName : searchedForTasks[index].projectName})',
+                    style: TextStyle(letterSpacing: 1,fontWeight: FontWeight.w500,color: darkNavy,fontSize: 16),),
+                ),
+              ],
+            );
           },
         ),
       ),

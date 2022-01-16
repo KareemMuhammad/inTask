@@ -102,7 +102,7 @@ class _SeeAllProjectsPageState extends State<SeeAllProjectsPage> {
                 _navigateToPreviousScreen(context);
               },
               child: const Icon(Icons.arrow_back, color: white,)),
-        title: _isSearching ? _buildSearchField() : Text("${widget.title}", style: TextStyle(color: white,fontSize: 20,),),
+        title: _isSearching ? _buildSearchField() : Text("${widget.title}", style: TextStyle(color: white,fontSize: 20,fontFamily: 'OrelegaOne',),),
         actions: _buildAppBarActions(),
       ),
       body: Padding(
@@ -112,7 +112,7 @@ class _SeeAllProjectsPageState extends State<SeeAllProjectsPage> {
               ? widget.tasksList.length : searchedForTasks.length,
           itemBuilder: (BuildContext context, int index) {
             return Container(
-              height: SizeConfig.screenHeight * 0.2,
+              height: SizeConfig.screenHeight * 0.17,
               child: ProjectWidget(model: _searchTextController.text.isEmpty
                   ? widget.tasksList[index] : searchedForTasks[index],),
             );

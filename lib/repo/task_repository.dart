@@ -1,6 +1,9 @@
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_storage/firebase_storage.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:taskaty/models/task_model.dart';
-import 'package:taskaty/utils/constants.dart';
 
 class TaskRepository{
   static const String TASKS_COLLECTION = "Tasks";
@@ -58,7 +61,7 @@ class TaskRepository{
         .orderBy('date',descending: true)
         .get()
         .catchError((e) {
-      print(e.toString());
+
     });
     return snapshot.docs.map((doc) {
       return MyTask.fromSnapshot(doc);
@@ -69,7 +72,7 @@ class TaskRepository{
     QuerySnapshot snapshot = await _tasksCollection.where('assignee',arrayContains: id).where('date',isEqualTo: date)
         .get()
         .catchError((e) {
-      print(e.toString());
+
     });
     return snapshot.docs.map((doc) {
       return MyTask.fromSnapshot(doc);
@@ -78,15 +81,48 @@ class TaskRepository{
 
   Future<List<MyTask>> getCurrentUserTasks(String id)async{
     QuerySnapshot snapshot = await _tasksCollection.where('assignee',arrayContains: id)
-        .where('status',isEqualTo: Utils.TO_DO)
         .orderBy('date',descending: true)
         .get()
         .catchError((e) {
-      print(e.toString());
+
     });
     return snapshot.docs.map((doc) {
       return MyTask.fromSnapshot(doc);
     }).toList();
+  }
+
+ static Future<String> uploadAudio(String record)async{
+    String audio;
+    UploadTask task = FirebaseStorage.instance.ref().child("$record").putFile(File(record));
+    TaskSnapshot snapshot = await task.then((snapshot) async {
+      audio = await snapshot.ref.getDownloadURL();
+      return snapshot;
+    });
+    return audio;
+  }
+
+  static Future<List<String>> uploadImages(List<XFile> images)async{
+    String imageUrl1;
+    List<String> converted = [];
+    for (XFile file in images) {
+      UploadTask task = FirebaseStorage.instance.ref().child("${file.name}").putFile(File(file.path));
+      TaskSnapshot snapshot = await task.then((snapshot) async {
+        imageUrl1 = await snapshot.ref.getDownloadURL();
+        converted.add(imageUrl1);
+        return snapshot;
+      });
+    }
+    return converted;
+  }
+
+  static Future<String> uploadFile(String fileLink,File file)async{
+    String converted;
+    UploadTask task = FirebaseStorage.instance.ref().child("$fileLink").putFile(file);
+    TaskSnapshot snapshot = await task.then((snapshot) async {
+      converted = await snapshot.ref.getDownloadURL();
+      return snapshot;
+    });
+    return converted;
   }
 
 }

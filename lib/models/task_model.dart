@@ -4,6 +4,7 @@ class MyTask {
 
   static const String PROJECT_ID = "projectId";
   static const String PROJECT_NAME = "projectName";
+  static const String FILE_LINK = "fileLink";
 
   String _id;
   String _projectId;
@@ -14,14 +15,16 @@ class MyTask {
   String _token;
   String _holderId;
   String _projectName;
+  String _fileLink;
   List<dynamic> _images;
   List<dynamic> _assignee;
-  bool _audioDescription;
+  String _audioLink;
   String _status;
   int _timestamp;
 
   MyTask(this._id, this._task, this._description, this._date, this._time,
-      this._audioDescription, this._timestamp,this._token,this._status,this._holderId,this._assignee,this._images,this._projectId,this._projectName);
+      this._audioLink, this._timestamp,this._token,this._status,this._holderId,
+      this._assignee,this._images,this._projectId,this._projectName,this._fileLink);
 
   //convert task object to map object
   Map<String, dynamic> toMap() {
@@ -33,7 +36,7 @@ class MyTask {
     map['description'] = this.description ?? '';
     map['date'] = this.date ?? '';
     map['time'] = this.time ?? '';
-    map['audioDescription'] = this.audioDescription ? 1 : 0;
+    map['audioDescription'] = this.audioLink ?? '';
     map['timestamp'] = this.timestamp;
     map['token'] = this.token ?? '';
     map['holderId'] = this.holderId ?? '';
@@ -42,6 +45,7 @@ class MyTask {
     map['assignee'] = this.assignee ?? [];
     map[PROJECT_ID] = this.projectId ?? '';
     map[PROJECT_NAME] = this.projectName ?? '';
+    map[FILE_LINK] = this.fileLink ?? '';
 
     return map;
   }
@@ -52,7 +56,7 @@ class MyTask {
     this.description = (doc.data() as Map)['description'] ?? '';
     this.date = (doc.data() as Map)['date'] ?? '';
     this.time = (doc.data() as Map)['time'] ?? '';
-    this.audioDescription = (doc.data() as Map)['audioDescription'] > 0 ? true : false;
+    this.audioLink = (doc.data() as Map)['audioDescription'] ?? '';
     this.timestamp = (doc.data() as Map)['timestamp'];
     this.token = (doc.data() as Map)['token'] ?? '';
     this.status = (doc.data() as Map)['status'] ?? 'To Do';
@@ -61,6 +65,7 @@ class MyTask {
     this.assignee = (doc.data() as Map)['assignee'] ?? [];
     this.projectId = (doc.data() as Map)[PROJECT_ID] ?? '';
     this.projectName = (doc.data() as Map)[PROJECT_NAME] ?? '';
+    this.fileLink = (doc.data() as Map)[FILE_LINK] ?? '';
   }
 
   String get id => _id;
@@ -81,6 +86,13 @@ class MyTask {
 
   set projectName(String value) {
     _projectName = value;
+  }
+
+
+  String get fileLink => _fileLink;
+
+  set fileLink(String value) {
+    _fileLink = value;
   }
 
   String get task => _task;
@@ -119,10 +131,11 @@ class MyTask {
     _holderId = value;
   }
 
-  bool get audioDescription => _audioDescription;
 
-  set audioDescription(bool value) {
-    _audioDescription = value;
+  String get audioLink => _audioLink;
+
+  set audioLink(String value) {
+    _audioLink = value;
   }
 
   String get status => _status;

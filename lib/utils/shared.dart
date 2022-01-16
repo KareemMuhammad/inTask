@@ -42,3 +42,6 @@ const String ADDITIONAL_MENUS_COLLECTION = "Additional Menus";
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey(debugLabel: "Main Navigator");
 const chars = 'AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz1234567890';
 const APP_LINK = "https://play.google.com/store/apps/details?id=com.outofthebox.taskaty";
+const String PRIVACY_POLICY = 'https://pages.flycricket.io/intask/privacy.html';
+const String TERMS_COND = 'https://pages.flycricket.io/intask/terms.html';
+var connectivityResult;

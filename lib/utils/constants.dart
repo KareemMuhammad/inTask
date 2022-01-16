@@ -1,9 +1,11 @@
 import 'dart:convert';
+import 'dart:io';
 import 'package:another_flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:taskaty/models/project_model.dart';
 import 'package:timeago/timeago.dart' as timeago;
 import 'package:taskaty/blocs/auth_bloc/auth_cubit.dart';
@@ -13,6 +15,7 @@ import 'package:taskaty/models/user_model.dart';
 import 'package:taskaty/utils/shared.dart';
 import 'package:uuid/uuid.dart';
 import '../main.dart';
+import 'package:intl/intl.dart' as intl;
 
 class Utils{
 
@@ -21,6 +24,7 @@ class Utils{
   static const String TO_DO = "To Do";
   static const String DOING = "Doing";
   static const String DONE = "Done";
+  static const String REGEX_PATTERN = r"^[\u0621-\u064A\u0660-\u0669 ]+$";
   static const String APP_ICON = "https://firebasestorage.googleapis.com/v0/b/taskaty-9dbe5.appspot.com/o/app_icon.jpeg?alt=media&token=709f7992-75e4-4d6f-b183-14c0eb1dbc60";
 
   static AppUser getCurrentUser(BuildContext context){
@@ -42,10 +46,22 @@ class Utils{
     BlocProvider.of<ProjectCubit>(context).setCurrentProject = model;
   }
 
+  static Future<File>  storeFile(String filename, List<int> bytes) async {
+    final dir = await getApplicationDocumentsDirectory();
+
+    final file = File('${dir.path}/$filename');
+    await file.writeAsBytes(bytes, flush: true);
+    return file;
+  }
+
   static String getProjectTimeAgo(String date){
     DateTime time = DateTime.parse(date);
     String timeAgo = timeago.format(time,locale: 'en_short');
     return timeAgo;
+  }
+
+  static bool isRTL(String text) {
+    return intl.Bidi.detectRtlDirectionality(text);
   }
 
   static String currentDate(){

@@ -1,13 +1,16 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_swiper/flutter_swiper.dart';
-import 'package:taskaty/helper_functions/AudioRecordHelper.dart';
 import 'package:taskaty/helper_functions/ReminderHelper.dart';
 import 'package:taskaty/models/task_model.dart';
 import 'package:taskaty/models/user_model.dart';
 import 'package:taskaty/repo/task_repository.dart';
 import 'package:taskaty/utils/constants.dart';
 import 'package:taskaty/utils/shared.dart';
+import 'package:taskaty/widgets/shared/custom_button.dart';
+import 'package:taskaty/widgets/shared/shared_widgets.dart';
+import 'package:taskaty/widgets/stateful/task_record_widget.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class TaskDetails extends StatefulWidget {
   final String _id;
@@ -22,7 +25,6 @@ class _TaskDetailsState extends State<TaskDetails> {
 
   final TaskRepository _databaseHelper = TaskRepository();
   final LocalNotification _localNotification = LocalNotification();
-  AudioPlayerHelper _audioPlayerHelper;
 
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final TextEditingController _taskNameController = TextEditingController();
@@ -30,20 +32,23 @@ class _TaskDetailsState extends State<TaskDetails> {
 
   MyTask _task;
   AppUser _assignedUser;
+  String _recordedAudio;
+  String _fileLink;
   bool _isLoading = false;
-  bool _playing = false, _recordedAudio, _isSwitched = false;
+  bool _isSwitched = false;
 
   void _getTaskDetails(String id) async {
     MyTask currentTask = await _databaseHelper.getTaskById(id);
     if (currentTask != null) {
       _taskNameController.text = currentTask.task;
       _descriptionController.text = currentTask.description;
+        this._fileLink = currentTask.fileLink;
       setState(() {
         this._task = currentTask;
-        this._recordedAudio = currentTask.audioDescription;
+        this._recordedAudio = currentTask.audioLink;
         if(this._task.assignee.length > 1) {
           _assignedUser = Utils
-              .getCurrentUsers(context)
+              .getCurrentUsers(this.context)
               .where((element) => element.id == _task.assignee[1])
               .first;
         }
@@ -52,25 +57,6 @@ class _TaskDetailsState extends State<TaskDetails> {
     setState(() {
       this._isLoading = false;
     });
-  }
-
-  void _playRecording() async {
-    this._audioPlayerHelper = AudioPlayerHelper(this._id);
-    if (!this._playing && _recordedAudio != null) {
-      var playing = await _audioPlayerHelper.startPlaying();
-      if (playing) {
-        setState(() {
-          this._playing = true;
-        });
-      }
-    } else {
-      var stopped = await _audioPlayerHelper.stopPlaying();
-      if (stopped) {
-        setState(() {
-          this._playing = false;
-        });
-      }
-    }
   }
 
   void _ifOptedForReminder() async {
@@ -137,6 +123,8 @@ class _TaskDetailsState extends State<TaskDetails> {
                           children: [
                             TextFormField(
                               enabled: false,
+                              style: TextStyle(fontWeight: FontWeight.bold,fontSize: 18,color: black),
+                              textDirection: Utils.isRTL(_taskNameController.text) ? TextDirection.rtl : TextDirection.ltr,
                               controller: this._taskNameController,
                               decoration: InputDecoration(
                                 labelText: 'Task Name',
@@ -152,8 +140,10 @@ class _TaskDetailsState extends State<TaskDetails> {
                             ),
                             const SizedBox(height: 20),
                             TextFormField(
+                              style: TextStyle(fontWeight: FontWeight.w500,fontSize: 16,color: black),
                               enabled: false,
                               maxLines: null,
+                              textDirection: Utils.isRTL(_descriptionController.text) ? TextDirection.rtl : TextDirection.ltr,
                               controller: this._descriptionController,
                               decoration: InputDecoration(
                                 labelText: 'Description',
@@ -169,34 +159,6 @@ class _TaskDetailsState extends State<TaskDetails> {
                               ),
                             ),
                             const SizedBox(height: 20),
-                            Container(
-                              child: this._recordedAudio != true
-                                  ? null
-                                  : Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Expanded(
-                                          child: Text(
-                                            'Recorded Audio',
-                                            style: TextStyle(
-                                              color: Colors.grey[600],
-                                              fontWeight: FontWeight.w500,
-                                              fontSize: 15.0,
-                                              letterSpacing: 1.0,
-                                            ),
-                                          ),
-                                        ),
-                                        IconButton(
-                                          onPressed: _playRecording,
-                                          icon: this._playing
-                                              ? Icon(Icons.pause_circle_filled)
-                                              : Icon(Icons.play_circle_filled),
-                                          color: lightNavy,
-                                        ),
-                                      ],
-                                    ),
-                            ),
                             Row(
                               crossAxisAlignment: CrossAxisAlignment.center,
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -257,10 +219,55 @@ class _TaskDetailsState extends State<TaskDetails> {
                               ],
                             ),
 
-                           _assignedUser != null ?
-                           _assignWidget() : const SizedBox(),
+                            _assignedUser != null ?
+                            _assignWidget() : const SizedBox(),
+
+                            Container(
+                                child: this._recordedAudio.isEmpty ? null
+                                    : TaskRecordWidget(path: _recordedAudio,)
+                            ),
 
                             const SizedBox(height: 20),
+
+                            _fileLink.isNotEmpty ?
+                            Row(mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                Text(
+                                  'Attachment',
+                                  style: TextStyle(
+                                    color: Colors.grey[800],
+                                    fontWeight: FontWeight.w500,
+                                    fontSize: 16,
+                                    letterSpacing: 1.0,
+                                  ),
+                                ),
+                                const SizedBox(width: 5,),
+                                Icon(Icons.attach_file,color: lightNavy,),
+                                Spacer(),
+                                Container(
+                                  height: 60,
+                                  width: 180,
+                                  padding: const EdgeInsets.all(10.0),
+                                  child: RaisedGradientButton(
+                                    radius: 20,
+                                    onPressed: ()async{
+                                      await launch(_fileLink);
+                                    },
+                                    gradient: myGradient(),
+                                    child: Text(
+                                          'Download File',
+                                          style: TextStyle(
+                                            color: white,
+                                            fontWeight: FontWeight.w600,
+                                            fontSize: SizeConfig.blockSizeVertical * 2.2,
+                                            letterSpacing: 1.0,
+                                          ),
+                                        ),
+                                  ),
+                                ),
+                              ],
+                            ): const SizedBox(),
 
                             _task.image != null && _task.image.isNotEmpty ?
                             _imagesWidget() : const SizedBox(),
@@ -288,9 +295,9 @@ class _TaskDetailsState extends State<TaskDetails> {
            Text(
              'Assigned to',
              style: TextStyle(
-               color: Colors.grey[600],
+               color: Colors.grey[700],
                fontWeight: FontWeight.w500,
-               fontSize: 15.0,
+               fontSize: 16.0,
                letterSpacing: 1.0,
              ),
            ),
@@ -317,9 +324,9 @@ class _TaskDetailsState extends State<TaskDetails> {
           Text(
             'Images',
             style: TextStyle(
-              color: Colors.grey[600],
+              color: Colors.grey[700],
               fontWeight: FontWeight.w500,
-              fontSize: 15.0,
+              fontSize: 16.0,
               letterSpacing: 1.0,
             ),
           ),

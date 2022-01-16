@@ -30,6 +30,7 @@ class AddTaskPage extends StatelessWidget {
         title: Text(
           'Create New Task',
           style: TextStyle(
+            fontFamily: 'OrelegaOne',
             color: Colors.white,
           ),
         ),

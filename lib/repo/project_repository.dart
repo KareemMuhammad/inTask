@@ -12,7 +12,7 @@ class ProjectRepository{
       await _projectsCollection.doc(id).set(userMap);
       return true;
     }catch(e){
-      print(e.toString());
+
       return false;
     }
   }
@@ -22,7 +22,7 @@ class ProjectRepository{
       await _projectsCollection.doc(id).update(map);
       return true;
     }catch(e){
-      print(e.toString());
+
       return false;
     }
   }
@@ -46,7 +46,7 @@ class ProjectRepository{
     QuerySnapshot snapshot = await _projectsCollection.where(ProjectModel.TEAM_IDS,arrayContains: appUser.id)
         .orderBy(ProjectModel.DATE,descending: true).get()
         .catchError((e) {
-      print(e.toString());
+
     });
     return snapshot.docs.map((doc) {
       return ProjectModel.fromSnapshot(doc);

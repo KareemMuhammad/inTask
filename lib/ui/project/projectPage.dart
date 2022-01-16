@@ -7,6 +7,7 @@ import 'package:taskaty/helper_functions/ReminderHelper.dart';
 import 'package:taskaty/models/project_model.dart';
 import 'package:taskaty/models/task_model.dart';
 import 'package:taskaty/ui/project/edit_project.dart';
+import 'package:taskaty/widgets/shared/custom_button.dart';
 import 'package:taskaty/widgets/shared/shared_widgets.dart';
 import '../task/seeAllPage.dart';
 import '../task/viewTaskPage.dart';
@@ -27,9 +28,9 @@ class ProjectPage extends StatefulWidget {
 
 class _ProjectPageState extends State<ProjectPage> {
   LocalNotification _localNotification = LocalNotification();
-  List<MyTask> allToDoTasks;
-  List<MyTask> allDoingTasks;
-  List<MyTask> allDoneTasks;
+  List<MyTask> _allToDoTasks;
+  List<MyTask> _allDoingTasks;
+  List<MyTask> _allDoneTasks;
   String weekDay,month;
 
   String _date = 'Task Manager';
@@ -71,9 +72,9 @@ class _ProjectPageState extends State<ProjectPage> {
                 BlocBuilder<MyTaskCubit,MyTaskState>(
                   builder: (BuildContext context, state) {
                     if (state is TaskLoaded) {
-                      allToDoTasks = state.tasks.where((element) => element.status == Utils.TO_DO).toList();
-                      allDoingTasks = state.tasks.where((element) => element.status == Utils.DOING).toList();
-                      allDoneTasks = state.tasks.where((element) => element.status == Utils.DONE).toList();
+                      _allToDoTasks = state.tasks.where((element) => element.status == Utils.TO_DO).toList();
+                      _allDoingTasks = state.tasks.where((element) => element.status == Utils.DOING).toList();
+                      _allDoneTasks = state.tasks.where((element) => element.status == Utils.DONE).toList();
                       return state.tasks.isEmpty ?
                       Center(
                         child: Column(
@@ -86,9 +87,24 @@ class _ProjectPageState extends State<ProjectPage> {
                             Text(
                               "You don't have any tasks!",
                               style: TextStyle(
-                                  color: Colors.black26,
+                                  color: Colors.black38,
                                   fontSize: 18.0,
                                   fontWeight: FontWeight.w500),
+                            ),
+                            const SizedBox(height: 15,),
+                            Center(
+                              child: RaisedGradientButton(
+                                  width: SizeConfig.screenWidth * 0.4,
+                                  height: SizeConfig.screenHeight * 0.1,
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Text('Go add one!',style: TextStyle(fontSize: SizeConfig.blockSizeVertical * 2.2,color: white),),
+                                  ),
+                                  gradient: myGradient(),
+                                  onPressed: (){
+                                    Navigator.push(context, MaterialPageRoute(builder: (_) => AddTaskPage()));
+                                  }
+                              ),
                             ),
                           ],
                         ),
@@ -106,6 +122,7 @@ class _ProjectPageState extends State<ProjectPage> {
                                     style: TextStyle(
                                         color: black,
                                         fontSize: 20.0,
+                                        fontFamily: 'OrelegaOne',
                                         fontWeight: FontWeight.w500),
                                   ),
                                   const SizedBox(width: 5,),
@@ -118,14 +135,14 @@ class _ProjectPageState extends State<ProjectPage> {
                               ),
                             ),
                           ),
-                          allToDoTasks.isEmpty?
+                          _allToDoTasks.isEmpty?
                           Center(child: Padding(
                             padding: const EdgeInsets.all(10.0),
                             child: Column(
                               children: [
                                 Icon(Icons.inbox,color: Colors.grey[600],),
                                 Text(
-                                  "To Do list is empty!",
+                                  "To Do list is empty",
                                   style: TextStyle(
                                       color: Colors.black38,
                                       fontSize: 16.0,
@@ -135,15 +152,15 @@ class _ProjectPageState extends State<ProjectPage> {
                             ),
                           ))
                               :  Container(
-                                height: SizeConfig.screenHeight * 0.35,
+                                height: SizeConfig.screenHeight * 0.3,
                                 child: ListView.builder(
                                     scrollDirection: Axis.horizontal,
-                                    itemCount: allToDoTasks.length,
+                                    itemCount: _allToDoTasks.length,
                                     itemBuilder: (context,index){
-                                      return new TaskList(task: allToDoTasks[index] );
+                                      return new TaskList(task: _allToDoTasks[index] );
                                     }),
                           ),
-                          allToDoTasks.isEmpty?
+                          _allToDoTasks.isEmpty?
                           const SizedBox()
                               : Align(
                                 alignment: Alignment.bottomRight,
@@ -153,7 +170,7 @@ class _ProjectPageState extends State<ProjectPage> {
                                     onTap: (){
                                       Navigator.of(context).push(MaterialPageRoute(
                                         builder: (builder) {
-                                          return SeeAllPage(title: Utils.TO_DO,tasksList: allToDoTasks,);
+                                          return SeeAllPage(title: Utils.TO_DO,tasksList: _allToDoTasks,);
                                         },
                                       ));
                                     },
@@ -162,6 +179,7 @@ class _ProjectPageState extends State<ProjectPage> {
                                       style: TextStyle(
                                           color: black,
                                           fontSize: 16.0,
+                                          fontFamily: 'OrelegaOne',
                                           fontWeight: FontWeight.w500,decoration: TextDecoration.underline),
                                     ),
                               ),
@@ -177,6 +195,7 @@ class _ProjectPageState extends State<ProjectPage> {
                                     "Doing",
                                     style: TextStyle(
                                         color: black,
+                                        fontFamily: 'OrelegaOne',
                                         fontSize: 20.0,
                                         fontWeight: FontWeight.w500),
                                   ),
@@ -190,14 +209,14 @@ class _ProjectPageState extends State<ProjectPage> {
                               ),
                             ),
                           ),
-                          allDoingTasks.isEmpty?
+                          _allDoingTasks.isEmpty?
                           Center(child: Padding(
                             padding: const EdgeInsets.all(10.0),
                             child: Column(
                               children: [
                                 Icon(Icons.inbox,color: Colors.grey[600],),
                                 Text(
-                                  "Doing list is empty!",
+                                  "Doing list is empty",
                                   style: TextStyle(
                                       color: Colors.black38,
                                       fontSize: 16.0,
@@ -207,15 +226,15 @@ class _ProjectPageState extends State<ProjectPage> {
                             ),
                           ))
                               : Container(
-                                height: SizeConfig.screenHeight * 0.35,
+                                height: SizeConfig.screenHeight * 0.3,
                                 child: ListView.builder(
                                     scrollDirection: Axis.horizontal,
-                                    itemCount: allDoingTasks.length,
+                                    itemCount: _allDoingTasks.length,
                                     itemBuilder: (context,index){
-                                      return new TaskList(task: allDoingTasks[index] );
+                                      return new TaskList(task: _allDoingTasks[index] );
                                     }),
                           ),
-                          allDoingTasks.isEmpty?
+                          _allDoingTasks.isEmpty?
                           const SizedBox()
                               :  Align(
                                 alignment: Alignment.bottomRight,
@@ -225,7 +244,7 @@ class _ProjectPageState extends State<ProjectPage> {
                                     onTap: (){
                                       Navigator.of(context).push(MaterialPageRoute(
                                         builder: (builder) {
-                                          return SeeAllPage(title: Utils.DOING,tasksList: allDoingTasks,);
+                                          return SeeAllPage(title: Utils.DOING,tasksList: _allDoingTasks,);
                                         },
                                       ));
                                     },
@@ -233,6 +252,7 @@ class _ProjectPageState extends State<ProjectPage> {
                                       "See all",
                                       style: TextStyle(
                                           color: black,
+                                          fontFamily: 'OrelegaOne',
                                           fontSize: 16.0,
                                           fontWeight: FontWeight.w500,decoration: TextDecoration.underline),
                                     ),
@@ -250,6 +270,7 @@ class _ProjectPageState extends State<ProjectPage> {
                                     style: TextStyle(
                                         color: black,
                                         fontSize: 20.0,
+                                        fontFamily: 'OrelegaOne',
                                         fontWeight: FontWeight.w500),
                                   ),
                                   const SizedBox(width: 5,),
@@ -262,14 +283,14 @@ class _ProjectPageState extends State<ProjectPage> {
                               ),
                             ),
                           ),
-                         allDoneTasks.isEmpty?
+                         _allDoneTasks.isEmpty?
                          Center(child: Padding(
                            padding: const EdgeInsets.all(10.0),
                            child: Column(
                              children: [
                                Icon(Icons.inbox,color: Colors.grey[600],),
                                Text(
-                                 "Done list is empty!",
+                                 "Done list is empty",
                                  style: TextStyle(
                                      color: Colors.black38,
                                      fontSize: 16.0,
@@ -279,15 +300,15 @@ class _ProjectPageState extends State<ProjectPage> {
                            ),
                          ))
                          :Container(
-                           height: SizeConfig.screenHeight * 0.35,
+                           height: SizeConfig.screenHeight * 0.3,
                             child: ListView.builder(
                                 scrollDirection: Axis.horizontal,
-                                itemCount: allDoneTasks.length,
+                                itemCount: _allDoneTasks.length,
                                 itemBuilder: (context,index){
-                                  return new TaskList(task: allDoneTasks[index] ,);
+                                  return new TaskList(task: _allDoneTasks[index] ,);
                                 }),
                           ),
-                          allDoneTasks.isEmpty?
+                          _allDoneTasks.isEmpty?
                           const SizedBox()
                               : Align(
                                 alignment: Alignment.bottomRight,
@@ -297,7 +318,7 @@ class _ProjectPageState extends State<ProjectPage> {
                                   onTap: (){
                                     Navigator.of(context).push(MaterialPageRoute(
                                       builder: (builder) {
-                                        return SeeAllPage(title: Utils.DONE,tasksList: allDoneTasks,);
+                                        return SeeAllPage(title: Utils.DONE,tasksList: _allDoneTasks,);
                                       },
                                     ));
                                   },
@@ -306,6 +327,7 @@ class _ProjectPageState extends State<ProjectPage> {
                                     style: TextStyle(
                                         color: black,
                                         fontSize: 16.0,
+                                        fontFamily: 'OrelegaOne',
                                         fontWeight: FontWeight.w500,decoration: TextDecoration.underline),
                                   ),
                                 ),

@@ -25,11 +25,13 @@ class _AddProjectScreenState extends State<AddProjectScreen> {
   final formKey = GlobalKey<FormState>();
   List<AppUser> searchedForUsers = [];
   List<dynamic> teamIds = [];
+  SearchCubit searchCubit;
+  String _projectName = '';
 
   @override
   Widget build(BuildContext context) {
     final ProjectCubit projectCubit = BlocProvider.of<ProjectCubit>(context);
-    final SearchCubit searchCubit = BlocProvider.of<SearchCubit>(context);
+    searchCubit = BlocProvider.of<SearchCubit>(context);
     return Scaffold(
       backgroundColor: white,
       appBar: AppBar(
@@ -38,6 +40,7 @@ class _AddProjectScreenState extends State<AddProjectScreen> {
           'Create New Project',
           style: TextStyle(
             color: white,
+            fontFamily: 'OrelegaOne',
           ),
         ),
         leading: IconButton(
@@ -60,11 +63,17 @@ class _AddProjectScreenState extends State<AddProjectScreen> {
                     padding: EdgeInsets.symmetric(horizontal: 18,vertical: 10),
                     child: TextFormField(
                       maxLength: 20,
+                      textDirection: Utils.isRTL(_projectName.isNotEmpty ? _projectName : textController.text) ? TextDirection.rtl : TextDirection.ltr,
                       style: TextStyle(color: black,fontSize: 18,),
                       decoration: textInputDecorationSign('Project Name',Icons.drive_file_rename_outline),
                       controller: textController,
                       validator: (val) {
                         return val.isEmpty ? 'You must type a name for the project!' : null;
+                      },
+                      onChanged: (val){
+                        setState(() {
+                          _projectName = val;
+                        });
                       },
                   ),),
                 const SizedBox(height: 10,),
@@ -74,6 +83,7 @@ class _AddProjectScreenState extends State<AddProjectScreen> {
                           color: Colors.grey[900],
                           fontWeight: FontWeight.w500,
                           fontSize: 17.0,
+                          fontFamily: 'OrelegaOne',
                           letterSpacing: 1.0,
                         ),
                       ),
@@ -81,6 +91,8 @@ class _AddProjectScreenState extends State<AddProjectScreen> {
                     padding: EdgeInsets.symmetric(horizontal: 18,vertical: 10),
                     child: TextFormField(
                       readOnly: true,
+                      showCursor: true,
+                      autofocus: false,
                       style: TextStyle(color: black,fontSize: 18,),
                       decoration: textInputDecorationSign('search..',Icons.group),
                       onTap: ()async{
@@ -180,4 +192,11 @@ class _AddProjectScreenState extends State<AddProjectScreen> {
     );
   }
 
+  @override
+  void dispose() {
+    searchCubit.clearAll();
+    teamIds.clear();
+    searchedForUsers.clear();
+    super.dispose();
+  }
 }

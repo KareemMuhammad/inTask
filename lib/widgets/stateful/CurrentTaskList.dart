@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:taskaty/blocs/upcoming_task_bloc/upcoming_task_cubit.dart';
 import 'package:taskaty/ui/task/editTaskPage.dart';
-import '../../ui/task/viewTaskPage.dart';
 import 'package:taskaty/utils/constants.dart';
+import '../../ui/task/viewTaskPage.dart';
 import 'package:taskaty/utils/shared.dart';
 import '../../models/task_model.dart';
 
@@ -87,40 +87,48 @@ class _CurrentTaskListState extends State<CurrentTaskList> {
         margin: const EdgeInsets.all(8.0),
         child: Column(
           children: [
-            Row(
-              children: [
-                Expanded(
-                  child: Text(
-                    widget.task.task,
-                    style: TextStyle(
-                      fontSize: 16.0,
-                      color: black,
-                      fontWeight: FontWeight.w500,
+            Directionality(
+              textDirection: RegExp(Utils.REGEX_PATTERN).hasMatch( widget.task.task)? TextDirection.rtl : TextDirection.ltr,
+              child: Row(mainAxisAlignment: RegExp(Utils.REGEX_PATTERN).hasMatch( widget.task.task)?
+              MainAxisAlignment.end : MainAxisAlignment.start,
+                children: [
+                  Expanded(
+                    child: Text(
+                      widget.task.task,
+                      style: TextStyle(
+                        fontSize: 18.0,
+                        color: black,
+                        fontWeight: FontWeight.bold,
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.clip,
+                      textAlign: RegExp(Utils.REGEX_PATTERN).hasMatch( widget.task.description)? TextAlign.end : TextAlign.start,
                     ),
-                    maxLines: 1,
-                    overflow: TextOverflow.clip,
-                    textAlign: TextAlign.start,
                   ),
-                ),
-
-                dropdownButton(widget.task,context),
-              ],
-            ),
-            Expanded(
-              child: Text(
-                widget.task.description,
-                style: TextStyle(
-                    fontSize: 14.0,
-                    color: Colors.grey[900],
-                    fontWeight: FontWeight.w500,
-                    letterSpacing: 1
-                ),
-                overflow: TextOverflow.ellipsis,
-                maxLines: 2,
-                textAlign: TextAlign.start,
-
+                  dropdownButton(widget.task,context),
+                ],
               ),
             ),
+            const SizedBox(height: 5,),
+            Directionality(
+              textDirection: RegExp(Utils.REGEX_PATTERN).hasMatch( widget.task.task)? TextDirection.rtl : TextDirection.ltr,
+              child: Expanded(
+                child: Text(
+                  widget.task.description,
+                  style: TextStyle(
+                      fontSize: 16.0,
+                      color: Colors.grey[900],
+                      fontWeight: FontWeight.w500,
+                      letterSpacing: 1
+                  ),
+                  overflow: TextOverflow.ellipsis,
+                  maxLines: 2,
+                  textAlign: RegExp(Utils.REGEX_PATTERN).hasMatch( widget.task.description)? TextAlign.end : TextAlign.start,
+
+                ),
+              ),
+            ),
+            const SizedBox(height: 8,),
             Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 widget.task.assignee.length > 1 ?
@@ -139,34 +147,21 @@ class _CurrentTaskListState extends State<CurrentTaskList> {
                 ): const SizedBox(),
                 widget.task.image.isNotEmpty ?
                 Icon(Icons.image,size: 17,color: Colors.grey[600],): const SizedBox(),
-                widget.task.audioDescription ?
+                widget.task.audioLink.isNotEmpty ?
                 Icon(Icons.mic,size: 17,color: Colors.grey[600],): const SizedBox(),
+                widget.task.fileLink.isNotEmpty ?
+                Icon(Icons.attach_file,size: 17,color: Colors.grey[600],): const SizedBox(),
               ],
             ),
-            Spacer(),
             Expanded(
               child: Align(
                 alignment: Alignment.bottomCenter,
-                child: Column(
-                  children: [
-                    Text(
-                      widget.task.time,
-                      style: TextStyle(
-                        fontSize: 14.0,
-                        color: Colors.grey[800],
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                    const SizedBox(height: 5,),
-                    Text(
-                      widget.task.date,
-                      style: TextStyle(
-                        fontSize: 14.0,
-                        color: Colors.grey[800],
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                  ],
+                child: Text(widget.task.date,
+                  style: TextStyle(
+                    fontSize: 15.0,
+                    color: Colors.grey[800],
+                    fontWeight: FontWeight.w500,
+                  ),
                 ),
               ),
             ),

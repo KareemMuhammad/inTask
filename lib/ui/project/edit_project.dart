@@ -22,7 +22,9 @@ class _EditProjectState extends State<EditProject> {
   final TextEditingController _nameController = TextEditingController();
   List<AppUser> searchedForUsers;
   List<dynamic> teamIds ;
+  String _projectName = '';
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  SearchCubit searchCubit;
 
   @override
   void initState() {
@@ -45,13 +47,14 @@ class _EditProjectState extends State<EditProject> {
   @override
   Widget build(BuildContext context) {
     final ProjectCubit projectCubit = BlocProvider.of<ProjectCubit>(context);
-    final SearchCubit searchCubit = BlocProvider.of<SearchCubit>(context);
+    searchCubit = BlocProvider.of<SearchCubit>(context);
     return Scaffold(
       appBar: AppBar(
         title: Text(
           'Edit Project',
           style: TextStyle(
             color: white,
+            fontFamily: 'OrelegaOne',
           ),
         ),
         leading: IconButton(
@@ -75,6 +78,7 @@ class _EditProjectState extends State<EditProject> {
                 const SizedBox(height: 25,),
                 TextFormField(
                   controller: this._nameController,
+                  textDirection: Utils.isRTL(_projectName.isNotEmpty ? _projectName : _nameController.text) ? TextDirection.rtl : TextDirection.ltr,
                   decoration: InputDecoration(
                     labelText: 'Project Name',
                     alignLabelWithHint: true,
@@ -94,6 +98,11 @@ class _EditProjectState extends State<EditProject> {
                       borderRadius: const BorderRadius.all(Radius.circular(20.0)),
                     ),
                   ),
+                  onChanged: (val){
+                    setState(() {
+                      _projectName = val;
+                    });
+                  },
                 ),
                 const SizedBox(height: 20,),
                 Text(
@@ -102,6 +111,7 @@ class _EditProjectState extends State<EditProject> {
                     color: Colors.grey[900],
                     fontWeight: FontWeight.w500,
                     fontSize: 17.0,
+                    fontFamily: 'OrelegaOne',
                     letterSpacing: 1.0,
                   ),
                 ),
@@ -109,6 +119,8 @@ class _EditProjectState extends State<EditProject> {
                   padding: EdgeInsets.symmetric(horizontal: 18,vertical: 10),
                   child: TextFormField(
                     readOnly: true,
+                    showCursor: true,
+                    autofocus: false,
                     style: TextStyle(color: black,fontSize: 18,),
                     decoration: textInputDecorationSign('search..',Icons.group),
                     onTap: ()async{
@@ -209,6 +221,7 @@ class _EditProjectState extends State<EditProject> {
                           : Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                               children: [
                                 RaisedGradientButton(
+                                    radius: 20,
                                     width: SizeConfig.screenWidth * 0.3,
                                     child: Padding(
                                       padding: const EdgeInsets.all(8.0),
@@ -225,6 +238,7 @@ class _EditProjectState extends State<EditProject> {
                                     }
                                  ),
                                 RaisedGradientButton(
+                                    radius: 20,
                                     width: SizeConfig.screenWidth * 0.3,
                                     child: Padding(
                                       padding: const EdgeInsets.all(8.0),
@@ -253,6 +267,14 @@ class _EditProjectState extends State<EditProject> {
         ),
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    searchCubit.clearAll();
+    teamIds.clear();
+    searchedForUsers.clear();
+    super.dispose();
   }
 
 }

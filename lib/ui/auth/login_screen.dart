@@ -37,7 +37,8 @@ class _LoginScreenState extends State<LoginScreen> {
                     child: Stack(alignment: Alignment.center,
                       children: [
                         Positioned(
-                          child: Image.asset('assets/free_app_icon.png',height: 60,width: 60,),
+                          child: Image.asset('assets/free_app_icon.png',
+                          height: SizeConfig.blockSizeVertical * 8,width: SizeConfig.blockSizeVertical * 8,),
                           top: 15,
                         ),
                         Positioned(
@@ -45,10 +46,11 @@ class _LoginScreenState extends State<LoginScreen> {
                           child: Text('Welcome to inTask', style: TextStyle(
                               fontSize: 23,
                               color: white,
+                              fontFamily: 'OrelegaOne',
                               shadows: [
                                 Shadow(
-                                  offset: const Offset(0.0, 3.0),
-                                  blurRadius: 2.0,
+                                  offset: const Offset(0.0, 2.0),
+                                  blurRadius: 1.0,
                                   color: const Color.fromARGB(100, 0, 0, 0),
                                 ),
                               ]

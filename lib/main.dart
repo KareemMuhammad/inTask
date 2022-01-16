@@ -1,8 +1,7 @@
-import 'package:device_preview/device_preview.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:package_info_plus/package_info_plus.dart';
@@ -28,9 +27,7 @@ PackageInfo packageInfo;
 Future firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   await Firebase.initializeApp();
   if(_auth.currentUser != null) {
-    User user = _auth.currentUser;
-    LocalNotification().showNormalNotification(message.notification.title);
-    print("Handling a background message: ${message.messageId}");
+
   }
 }
 
@@ -39,17 +36,17 @@ Future initializeRemoteConfig() async {
   await remoteConfigService.initialize();
 }
 
+
 void main() async{
   WidgetsFlutterBinding.ensureInitialized();
   packageInfo = await PackageInfo.fromPlatform();
   await Firebase.initializeApp();
+  connectivityResult = await (Connectivity().checkConnectivity());
   LocalNotification().initialize();
   await initializeRemoteConfig();
   FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
   runApp(
-      DevicePreview(
-          enabled: !kReleaseMode,
-          builder: (context) => MyApp())
+       MyApp()
   );
 }
 
@@ -78,8 +75,6 @@ class MyApp extends StatelessWidget {
         ),
       ],
       child: MaterialApp(
-        locale: DevicePreview.locale(context),
-        builder: DevicePreview.appBuilder,
         debugShowCheckedModeBanner: false,
         theme: ThemeData(
           appBarTheme: AppBarTheme(

@@ -36,7 +36,7 @@ class _OTPTestScreenState extends State<OTPTestScreen> {
       key: _scaffoldkey,
       appBar: AppBar(
         backgroundColor: darkNavy,
-        title: Text('OTP Verification'),
+        title: Text('OTP Verification',style: TextStyle(fontFamily: 'OrelegaOne',),),
       ),
       body: Column(
         children: [

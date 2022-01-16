@@ -48,16 +48,20 @@ class UpcomingTaskCubit extends Cubit<MyUpcomingTaskState>{
 
   void removeFromList(MyTask task){
     currentTasks.removeWhere((element) => element.id == task.id);
+    currentTasks.sort((a,b) => b.date.compareTo(a.date));
     emit(UpcomingTasksLoaded(currentTasks));
   }
+
   void addToList(MyTask task){
     currentTasks.add(task);
+    currentTasks.sort((a,b) => b.date.compareTo(a.date));
     emit(UpcomingTasksLoaded(currentTasks));
   }
 
   void editTaskOfList(MyTask task){
     final index = currentTasks.indexOf(currentTasks.where((bp) => bp.id == task.id).first);
     currentTasks[index] = task;
+    currentTasks.sort((a,b) => b.date.compareTo(a.date));
     emit(UpcomingTasksLoaded(currentTasks));
   }
 

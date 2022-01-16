@@ -24,6 +24,7 @@ class ViewTaskPage extends StatelessWidget {
         title: Text(
           'Task Details',
           style: TextStyle(
+            fontFamily: 'OrelegaOne',
             color: white,
           ),
         ),

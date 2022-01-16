@@ -105,11 +105,11 @@ class _SeeAllMyTaskPageState extends State<SeeAllMyTaskPage> {
         leading: _isSearching
             ? BackButton(color: white,)
             : GestureDetector(
-            onTap: (){
-              _navigateToPreviousScreen(context);
-            },
-            child: const Icon(Icons.arrow_back, color: white,)),
-        title: _isSearching ? _buildSearchField() : Text("My Tasks", style: TextStyle(color: white,fontSize: 20,),),
+              onTap: (){
+                _navigateToPreviousScreen(context);
+              },
+             child: const Icon(Icons.arrow_back, color: white,)),
+        title: _isSearching ? _buildSearchField() : Text("My Tasks", style: TextStyle(color: white,fontSize: 20,fontFamily: 'OrelegaOne',),),
         actions: _buildAppBarActions(),
       ),
       body: BlocBuilder<UpcomingTaskCubit,MyUpcomingTaskState>(
@@ -152,7 +152,7 @@ class _SeeAllMyTaskPageState extends State<SeeAllMyTaskPage> {
               child: GridView.builder(
                 itemCount: _searchTextController.text.isEmpty
                     ? currentTasks.length : searchedForTasks.length,
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2,childAspectRatio: 0.8),
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2,childAspectRatio: 0.7),
                 itemBuilder: (BuildContext context, int index) {
                   return Column(
                     children: [

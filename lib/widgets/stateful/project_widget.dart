@@ -24,17 +24,21 @@ class ProjectWidget extends StatelessWidget {
         },
         child: Column(
           children: [
-            Row(
-              children: [
-                Icon(Icons.widgets,color: white,size: 22,),
-                const SizedBox(width: 10,),
-                Expanded(child: Text(model.name,style: TextStyle(color: white,fontSize: 19),
-                  maxLines: 1,overflow: TextOverflow.ellipsis,)),
-              ],
+            Directionality(
+              textDirection: RegExp(Utils.REGEX_PATTERN).hasMatch(model.name)? TextDirection.rtl : TextDirection.ltr,
+              child: Row(mainAxisAlignment: RegExp(Utils.REGEX_PATTERN).hasMatch(model.name)?
+                  MainAxisAlignment.end : MainAxisAlignment.start,
+                children: [
+                  const Icon(Icons.widgets,color: white,size: 22,),
+                  const SizedBox(width: 10,),
+                  Expanded(child: Text(model.name,style: TextStyle(color: white,fontSize: 19),
+                    maxLines: 1,overflow: TextOverflow.ellipsis,)),
+                ],
+              ),
             ),
             Expanded(
               child: Align(
-                  alignment: Alignment.bottomRight,
+                  alignment: RegExp(Utils.REGEX_PATTERN).hasMatch(model.name)? Alignment.bottomLeft : Alignment.bottomRight,
                   child: Text(Utils.getProjectTimeAgo(model.date),style: TextStyle(color: white,fontSize: 17),)),
             ),
           ],

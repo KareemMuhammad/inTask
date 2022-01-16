@@ -18,7 +18,7 @@ class UserRepository{
  Future<List<AppUser>> getAllUsers()async{
   QuerySnapshot snapshot = await _usersCollection.get()
       .catchError((e) {
-   print(e.toString());
+
   });
   return snapshot.docs.map((doc) {
    return AppUser.fromSnapshot(doc);
@@ -39,7 +39,7 @@ class UserRepository{
       .where(AppUser.PHONE, isEqualTo: user.phoneNumber)
       .get();
   final List<DocumentSnapshot> docs = result.docs;
-  print(docs.length);
+
   return docs.length == 0 || docs.isEmpty ? true : false;
  }
 
@@ -48,7 +48,7 @@ class UserRepository{
       .where(AppUser.PHONE, isEqualTo: email)
       .get();
   final List<DocumentSnapshot> docs = result.docs;
-  print(docs.length);
+
   return docs.length == 0 || docs.isEmpty ? true : false;
  }
 
