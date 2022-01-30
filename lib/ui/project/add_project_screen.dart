@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:taskaty/blocs/invitation_bloc/invitation_cubit.dart';
 import 'package:taskaty/blocs/project_bloc/project_cubit.dart';
 import 'package:taskaty/blocs/project_bloc/project_state.dart';
 import 'package:taskaty/blocs/search_bloc/search_cubit.dart';
 import 'package:taskaty/blocs/search_bloc/search_state.dart';
 import 'package:taskaty/helper_functions/SearchHelper.dart';
+import 'package:taskaty/models/invitaion_model.dart';
 import 'package:taskaty/models/notification_model.dart';
 import 'package:taskaty/models/project_model.dart';
 import 'package:taskaty/models/user_model.dart';
@@ -31,6 +33,7 @@ class _AddProjectScreenState extends State<AddProjectScreen> {
   @override
   Widget build(BuildContext context) {
     final ProjectCubit projectCubit = BlocProvider.of<ProjectCubit>(context);
+    final InvitationCubit invitationCubit = BlocProvider.of<InvitationCubit>(context);
     searchCubit = BlocProvider.of<SearchCubit>(context);
     return Scaffold(
       backgroundColor: white,
@@ -149,8 +152,13 @@ class _AddProjectScreenState extends State<AddProjectScreen> {
                             NotificationModel model = NotificationModel(id: '',
                                 icon: Utils.APP_ICON,
                                 title: textController.text,
-                                body: '${Utils.getCurrentUser(context).name} added you to a new project');
+                                body: '${Utils.getCurrentUser(context).name} invited you to a new project');
                             Utils.sendPushMessage(model, user.token);
+                            final String id = Uuid().v1();
+                            final String date = Utils.currentDate();
+                            final InvitationModel inviteModel = InvitationModel(id,
+                                Utils.getCurrentUser(context).id, state.projectsList.last,date, user.id);
+                            invitationCubit.addInviteToProject(inviteModel);
                           }
                         }
                         teamIds.clear();

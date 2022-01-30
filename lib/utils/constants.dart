@@ -24,7 +24,6 @@ class Utils{
   static const String TO_DO = "To Do";
   static const String DOING = "Doing";
   static const String DONE = "Done";
-  static const String REGEX_PATTERN = r"^[\u0621-\u064A\u0660-\u0669 ]+$";
   static const String APP_ICON = "https://firebasestorage.googleapis.com/v0/b/taskaty-9dbe5.appspot.com/o/app_icon.jpeg?alt=media&token=709f7992-75e4-4d6f-b183-14c0eb1dbc60";
 
   static AppUser getCurrentUser(BuildContext context){

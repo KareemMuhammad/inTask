@@ -25,8 +25,8 @@ class ProjectWidget extends StatelessWidget {
         child: Column(
           children: [
             Directionality(
-              textDirection: RegExp(Utils.REGEX_PATTERN).hasMatch(model.name)? TextDirection.rtl : TextDirection.ltr,
-              child: Row(mainAxisAlignment: RegExp(Utils.REGEX_PATTERN).hasMatch(model.name)?
+              textDirection: Utils.isRTL(model.name)? TextDirection.rtl : TextDirection.ltr,
+              child: Row(mainAxisAlignment: Utils.isRTL(model.name)?
                   MainAxisAlignment.end : MainAxisAlignment.start,
                 children: [
                   const Icon(Icons.widgets,color: white,size: 22,),
@@ -38,7 +38,7 @@ class ProjectWidget extends StatelessWidget {
             ),
             Expanded(
               child: Align(
-                  alignment: RegExp(Utils.REGEX_PATTERN).hasMatch(model.name)? Alignment.bottomLeft : Alignment.bottomRight,
+                  alignment: Utils.isRTL(model.name)? Alignment.bottomLeft : Alignment.bottomRight,
                   child: Text(Utils.getProjectTimeAgo(model.date),style: TextStyle(color: white,fontSize: 17),)),
             ),
           ],

@@ -3,7 +3,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:taskaty/blocs/user_bloc/user_cubit.dart';
 import 'package:taskaty/blocs/user_bloc/user_state.dart';
 import 'package:taskaty/models/user_model.dart';
-import 'package:taskaty/ui/nav_bar/policy.dart';
 import 'package:taskaty/utils/constants.dart';
 import 'package:taskaty/utils/shared.dart';
 import 'package:taskaty/widgets/shared/custom_button.dart';
@@ -55,7 +54,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         child: SingleChildScrollView(
           child: Padding(
             padding: const EdgeInsets.all(10.0),
-            child: Column(mainAxisSize: MainAxisSize.min,
+            child: Column(
               children: [
                 const SizedBox(height: 25,),
                 TextFormField(
@@ -143,19 +142,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                     );
                   }
                 ),
-               Padding(
-                 padding: EdgeInsets.only(top: SizeConfig.screenHeight * 0.3),
-                 child: TextButton(
-                          onPressed: () {
-                            Navigator.push(context, MaterialPageRoute(builder: (_) => PrivacyPolicy()));
-                          },
-                          child: Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Text('Privacy Policy',style: TextStyle(fontSize: 20,color: Colors.grey[800],
-                              fontFamily: 'OrelegaOne',fontWeight: FontWeight.w500),),
-                          ),
-                        ),
-               ),
               ],
             ),
           ),

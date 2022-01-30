@@ -1,4 +1,3 @@
-import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -41,7 +40,6 @@ void main() async{
   WidgetsFlutterBinding.ensureInitialized();
   packageInfo = await PackageInfo.fromPlatform();
   await Firebase.initializeApp();
-  connectivityResult = await (Connectivity().checkConnectivity());
   LocalNotification().initialize();
   await initializeRemoteConfig();
   FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);

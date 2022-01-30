@@ -88,8 +88,8 @@ class _CurrentTaskListState extends State<CurrentTaskList> {
         child: Column(
           children: [
             Directionality(
-              textDirection: RegExp(Utils.REGEX_PATTERN).hasMatch( widget.task.task)? TextDirection.rtl : TextDirection.ltr,
-              child: Row(mainAxisAlignment: RegExp(Utils.REGEX_PATTERN).hasMatch( widget.task.task)?
+              textDirection: Utils.isRTL( widget.task.task)? TextDirection.rtl : TextDirection.ltr,
+              child: Row(mainAxisAlignment: Utils.isRTL( widget.task.task)?
               MainAxisAlignment.end : MainAxisAlignment.start,
                 children: [
                   Expanded(
@@ -102,7 +102,7 @@ class _CurrentTaskListState extends State<CurrentTaskList> {
                       ),
                       maxLines: 1,
                       overflow: TextOverflow.clip,
-                      textAlign: RegExp(Utils.REGEX_PATTERN).hasMatch( widget.task.description)? TextAlign.end : TextAlign.start,
+                      textAlign: Utils.isRTL( widget.task.description)? TextAlign.end : TextAlign.start,
                     ),
                   ),
                   dropdownButton(widget.task,context),
@@ -111,7 +111,7 @@ class _CurrentTaskListState extends State<CurrentTaskList> {
             ),
             const SizedBox(height: 5,),
             Directionality(
-              textDirection: RegExp(Utils.REGEX_PATTERN).hasMatch( widget.task.task)? TextDirection.rtl : TextDirection.ltr,
+              textDirection: Utils.isRTL( widget.task.task)? TextDirection.rtl : TextDirection.ltr,
               child: Expanded(
                 child: Text(
                   widget.task.description,
@@ -123,7 +123,7 @@ class _CurrentTaskListState extends State<CurrentTaskList> {
                   ),
                   overflow: TextOverflow.ellipsis,
                   maxLines: 2,
-                  textAlign: RegExp(Utils.REGEX_PATTERN).hasMatch( widget.task.description)? TextAlign.end : TextAlign.start,
+                  textAlign: Utils.isRTL( widget.task.description)? TextAlign.end : TextAlign.start,
 
                 ),
               ),

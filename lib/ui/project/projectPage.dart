@@ -405,7 +405,8 @@ class _ProjectPageState extends State<ProjectPage> {
                 padding: const EdgeInsets.all(8.0),
                 child: Text('${Utils.getCurrentProject(context) == null ?
                 widget.projectModel.name : Utils.getCurrentProject(context).name}',maxLines: 2,
-                      style: TextStyle(color: white,fontSize: 20,overflow: TextOverflow.clip,),
+                      style: TextStyle(color: white,fontSize: 20,),
+                  overflow: TextOverflow.clip,
                     ),
               ) ,
             ),
