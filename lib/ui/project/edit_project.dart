@@ -233,7 +233,7 @@ class _EditProjectState extends State<EditProject> {
                                         final ProjectModel model = ProjectModel(Utils.getCurrentProject(context).id,
                                             Utils.getCurrentProject(context).ownerId,_nameController.text,
                                             teamIds,searchedForUsers,Utils.getCurrentProject(context).date);
-                                         projectCubit.editProject(model, Utils.getCurrentUser(context));
+                                         projectCubit.editProject(model);
                                       }
                                     }
                                  ),

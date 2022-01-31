@@ -14,6 +14,7 @@ import 'package:taskaty/models/user_model.dart';
 import 'package:taskaty/repo/user_repository.dart';
 import 'package:taskaty/services/notification_services.dart';
 import 'package:taskaty/ui/nav_bar/edit_profile.dart';
+import 'package:taskaty/ui/nav_bar/invitations_screen.dart';
 import 'package:taskaty/ui/project/seeAllProjectsPage.dart';
 import 'package:taskaty/ui/task/seeAllPage.dart';
 import 'package:taskaty/ui/wrapper_screen.dart';
@@ -124,6 +125,26 @@ class _MainScreenState extends State<MainScreen> {
                       padding: const EdgeInsets.all(8.0),
                       child: new Divider(height: 1,color: black,),
                     ),
+                    ListTile(
+                      leading: Icon(Icons.email,size: 23,color: darkNavy,),
+                      title: Text('My Invitations', style: TextStyle(
+                        fontSize: 19,
+                        color: darkNavy,
+                        fontFamily: 'OrelegaOne',
+                      ),),
+                      onTap: (){
+                        Navigator.pop(context);
+                        Navigator.of(context).push(MaterialPageRoute(
+                          builder: (builder) {
+                            return InvitationsScreen();
+                          },
+                        ));
+                      },
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: new Divider(height: 1,color: black,),
+                    ),
                    ListTile(
                         leading: Icon(Icons.rate_review_outlined,color: darkNavy,size: 23,),
                         title: Text('Rate Our App', style: TextStyle(
@@ -205,6 +226,26 @@ class _MainScreenState extends State<MainScreen> {
                         Navigator.of(context).push(MaterialPageRoute(
                           builder: (builder) {
                             return SeeAllMyTaskPage();
+                          },
+                        ));
+                      },
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: new Divider(height: 1,color: black,),
+                    ),
+                    ListTile(
+                      leading: Icon(Icons.email,size: 23,color: darkNavy,),
+                      title: Text('My Invitations', style: TextStyle(
+                        fontSize: 19,
+                        color: darkNavy,
+                        fontFamily: 'OrelegaOne',
+                      ),),
+                      onTap: (){
+                        Navigator.pop(context);
+                        Navigator.of(context).push(MaterialPageRoute(
+                          builder: (builder) {
+                            return InvitationsScreen();
                           },
                         ));
                       },

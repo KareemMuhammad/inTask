@@ -36,7 +36,7 @@ class DataSearch extends SearchDelegate<AppUser>{
   Widget buildResults(BuildContext context) {
     List<AppUser> suggestionLists = query.isNotEmpty? _usersList.
     where((user) => user.id != Utils.getCurrentUser(context).id
-    && user.email.toLowerCase().contains(query)).toList():[];
+    && user.email.toLowerCase().startsWith(query)).toList():[];
     return ListView.builder(
       itemCount: suggestionLists.length,
       itemBuilder: (ctx,index){
@@ -74,7 +74,7 @@ class DataSearch extends SearchDelegate<AppUser>{
   Widget buildSuggestions(BuildContext context) {
     List<AppUser> suggestionLists = query.isNotEmpty? _usersList.
     where((user) => user.id != Utils.getCurrentUser(context).id
-    && user.email.toLowerCase().contains(query)).toList():[];
+    && user.email.toLowerCase().startsWith(query)).toList():[];
     return ListView.builder(
         itemCount: suggestionLists.length,
         itemBuilder: (ctx,index){

@@ -66,6 +66,15 @@ class ProjectModel{
     DATE : date ?? '',
   };
 
+  ProjectModel.fromMap(Map<String,dynamic> map){
+   id = map[ID] ?? '';
+   ownerId = map[OWNER] ?? '';
+   name = map[NAME] ?? '';
+   teamMates = teamList(map[TEAM] ?? []);
+   teamIds = map[TEAM_IDS] ?? [];
+   date = map[DATE] ?? '';
+  }
+
   ProjectModel.fromSnapshot(DocumentSnapshot doc){
     id = (doc.data() as Map)[ID] ?? '';
     ownerId = (doc.data() as Map)[OWNER] ?? '';

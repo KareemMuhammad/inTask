@@ -43,13 +43,13 @@ class ProjectCubit extends Cubit<ProjectState>{
     emit(ProjectLoading());
     bool result = await projectRepository.saveProjectToDb(projectModel.toMap(),projectModel.id);
     if (result) {
-      getAllProjects(user);
+      emit(SingleProjectLoaded(projectModel));
     }else{
       emit(ProjectFailure());
     }
   }
 
-  void editProject(ProjectModel projectModel,AppUser user) async {
+  Future editProject(ProjectModel projectModel) async {
     emit(ProjectLoading());
     bool result = await projectRepository.updateCurrentProject(projectModel.toMap(),projectModel.id);
     if (result) {

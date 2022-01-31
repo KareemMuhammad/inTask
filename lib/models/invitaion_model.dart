@@ -7,14 +7,16 @@ class InvitationModel{
   static const String GUEST = "guest";
   static const String PROJECT = "project";
   static const String DATE = "date";
+  static const String OWNER_NAME = "ownerName";
 
   String _id;
   String _ownerId;
   String _guestId;
   ProjectModel _project;
+  String _ownerName;
   String _date;
 
-  InvitationModel(this._id, this._ownerId, this._project, this._date,this._guestId);
+  InvitationModel(this._id, this._ownerId, this._project, this._date,this._guestId,this._ownerName);
 
   String get date => _date;
 
@@ -22,6 +24,11 @@ class InvitationModel{
     _date = value;
   }
 
+  String get ownerName => _ownerName;
+
+  set ownerName(String value) {
+    _ownerName = value;
+  }
 
   String get guestId => _guestId;
 
@@ -53,13 +60,15 @@ class InvitationModel{
     PROJECT : project.toMap() ?? {},
     DATE : date ?? '',
     GUEST : guestId ?? '',
+    OWNER_NAME : ownerName ?? '',
   };
 
   InvitationModel.fromSnapshot(DocumentSnapshot doc){
     id = (doc.data() as Map)[ID] ?? '';
     ownerId = (doc.data() as Map)[OWNER] ?? '';
-    project = (doc.data() as Map)[PROJECT] ?? {};
+    project = ProjectModel.fromMap((doc.data() as Map)[PROJECT] ?? {}) ?? {};
     date = (doc.data() as Map)[DATE] ?? '';
     guestId = (doc.data() as Map)[GUEST] ?? '';
+    ownerName = (doc.data() as Map)[OWNER_NAME] ?? '';
   }
 }

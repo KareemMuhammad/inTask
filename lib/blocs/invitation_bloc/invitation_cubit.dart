@@ -8,36 +8,39 @@ class InvitationCubit extends Cubit<InvitationState>{
 
   InvitationCubit({this.projectRepository}) : super(InvitationInitial());
 
-  List<InvitationModel> inviteList;
+  List<InvitationModel> inviteReceivedList;
 
-  void getAllInvitationsOfGuest(String id) async{
+  void getAllInvitationsOfReceived(String id) async{
     try{
-      emit(InvitationLoading());
-      inviteList = await projectRepository.getAllInvitations(id,InvitationModel.GUEST);
+      emit(ReceivedInvitationLoading());
+      inviteReceivedList = await projectRepository.getAllInvitations(id,InvitationModel.GUEST);
+      if(inviteReceivedList != null){
+        emit(ReceivedInvitationsLoaded(inviteReceivedList));
+      }else{
+        emit(InvitationReceivedFailure());
+      }
     }catch(e){
       print(e.toString());
-      emit(InvitationFailure());
-    }
-  }
-
-  void getAllInvitationsOfOwner(String id) async{
-    try{
-      emit(InvitationLoading());
-      inviteList = await projectRepository.getAllInvitations(id,InvitationModel.OWNER);
-    }catch(e){
-      print(e.toString());
-      emit(InvitationFailure());
+      emit(InvitationReceivedFailure());
     }
   }
 
   void addInviteToProject(InvitationModel inviteModel) async {
-    emit(InvitationLoading());
-    await projectRepository.saveProjectToInvitationsDb(inviteModel.toMap(),inviteModel.id);
+    bool result = await projectRepository.saveProjectToInvitationsDb(inviteModel.toMap(),inviteModel.id);
+    if(result){
+      emit(InvitationUpdated());
+    }else{
+      emit(InvitationNotUpdated());
+    }
   }
 
   void removeInviteFromProject(InvitationModel inviteModel) async {
-    emit(InvitationLoading());
-    await projectRepository.deleteProjectInviteFromDb(inviteModel.id);
+    bool result = await projectRepository.deleteProjectInviteFromDb(inviteModel.id);
+    if(result){
+      emit(InvitationUpdated());
+    }else{
+      emit(InvitationNotUpdated());
+    }
   }
 
 }

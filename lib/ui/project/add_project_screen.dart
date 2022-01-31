@@ -27,6 +27,8 @@ class _AddProjectScreenState extends State<AddProjectScreen> {
   final formKey = GlobalKey<FormState>();
   List<AppUser> searchedForUsers = [];
   List<dynamic> teamIds = [];
+  List<AppUser> projectTeam = [];
+  List<dynamic> projectTeamIds = [];
   SearchCubit searchCubit;
   String _projectName = '';
 
@@ -146,7 +148,7 @@ class _AddProjectScreenState extends State<AddProjectScreen> {
                 const SizedBox(height: 30,),
                 BlocConsumer<ProjectCubit,ProjectState>(
                     listener: (context,state){
-                      if(state is ProjectsLoaded){
+                      if(state is SingleProjectLoaded){
                         for(AppUser user in searchedForUsers){
                           if(user.id != Utils.getCurrentUser(context).id) {
                             NotificationModel model = NotificationModel(id: '',
@@ -157,12 +159,16 @@ class _AddProjectScreenState extends State<AddProjectScreen> {
                             final String id = Uuid().v1();
                             final String date = Utils.currentDate();
                             final InvitationModel inviteModel = InvitationModel(id,
-                                Utils.getCurrentUser(context).id, state.projectsList.last,date, user.id);
+                                Utils.getCurrentUser(context).id, state.project,date,
+                                user.id,Utils.getCurrentUser(context).name);
                             invitationCubit.addInviteToProject(inviteModel);
                           }
                         }
+                        projectCubit.getAllProjects(Utils.getCurrentUser(context));
                         teamIds.clear();
+                        projectTeamIds.clear();
                         searchedForUsers.clear();
+                        projectTeam.clear();
                         Navigator.pop(context);
                       }
                       },
@@ -179,13 +185,13 @@ class _AddProjectScreenState extends State<AddProjectScreen> {
                                 gradient: myGradient(),
                                 onPressed: (){
                                   if(formKey.currentState.validate()) {
-                                    teamIds.add(Utils.getCurrentUser(context).id);
-                                    searchedForUsers.add(Utils.getCurrentUser(context));
+                                    projectTeamIds.add(Utils.getCurrentUser(context).id);
+                                    projectTeam.add(Utils.getCurrentUser(context));
                                     final String id = Uuid().v1();
                                     final String date = Utils.currentDate();
                                     final ProjectModel model = ProjectModel(id,
                                         Utils.getCurrentUser(context).id,textController.text,
-                                        teamIds,searchedForUsers,date);
+                                        projectTeamIds,projectTeam,date);
                                     projectCubit.addProject(model,Utils.getCurrentUser(context));
                                   }
                                 }

@@ -4,6 +4,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:package_info_plus/package_info_plus.dart';
+import 'package:taskaty/blocs/invitation_bloc/invitation_cubit.dart';
 import 'package:taskaty/blocs/project_bloc/project_cubit.dart';
 import 'package:taskaty/blocs/search_bloc/search_cubit.dart';
 import 'package:taskaty/blocs/search_bloc/search_state.dart';
@@ -64,6 +65,9 @@ class MyApp extends StatelessWidget {
         ),
         BlocProvider(
           create: (context) => MyTaskCubit(taskRepository: TaskRepository()),
+        ),
+        BlocProvider(
+          create: (context) => InvitationCubit(projectRepository: ProjectRepository()),
         ),
         BlocProvider(
           create: (context) => ProjectCubit(projectRepository: ProjectRepository()),

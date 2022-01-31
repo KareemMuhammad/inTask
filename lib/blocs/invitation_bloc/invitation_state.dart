@@ -6,14 +6,18 @@ abstract class InvitationState {}
 
 class InvitationInitial extends InvitationState{}
 
-class InvitationFailure extends InvitationState{}
+class InvitationReceivedFailure extends InvitationState{}
 
-class InvitationLoading extends InvitationState{}
+class InvitationUpdated extends InvitationState{}
+
+class InvitationNotUpdated extends InvitationState{}
+
+class ReceivedInvitationLoading extends InvitationState{}
 
 class InvitationDeleted extends InvitationState{}
 
-class InvitationsLoaded extends InvitationState{
-  final List<InvitationModel> invitationsList;
+class ReceivedInvitationsLoaded extends InvitationState{
+  final List<InvitationModel> receivedList;
 
-  InvitationsLoaded(this.invitationsList);
+  ReceivedInvitationsLoaded(this.receivedList);
 }
